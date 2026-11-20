@@ -153,7 +153,7 @@ footer .row{align-items:center}
 .eye{position:absolute;right:2px;top:50%;transform:translateY(-50%);width:44px;min-height:40px;padding:0;border:0;background:none;color:var(--mute);display:grid;place-items:center}
 .eye svg{width:22px;height:22px}
 .fmsg{margin:8px 0 0;font-weight:600;min-height:1.4em}.fmsg.ok{color:var(--ok)}.fmsg.err{color:var(--red)}
-.pend{color:var(--ok)}
+.pend{color:var(--mute)}.gone{color:var(--red)}
 .sdone{width:44px;padding:0;font-size:20px;color:var(--mute)}.sdone.on{background:var(--ok);border-color:var(--ok);color:#fff}
 .set.done input{border-color:var(--ok)}
 .wtimer{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--field);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;margin:12px 0 0}
@@ -221,7 +221,7 @@ body.ro #newW,body.ro #bform,body.ro #blist .x{display:none!important}
   <div><h1>Trainingsbuch</h1><p class="gsub">Trainings, Fortschritt und Freunde</p></div></div>
   <div class="gcard" id="gcard"></div>
   <button type="button" class="glocal" id="gLocalBtn">Ohne Konto nutzen</button>
-  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 3 · 20.11.2026</p>
+  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 4 · 20.11.2026</p>
 </div></div>
 <header class="top band"><div class="wrap">
   <div class="toprow"><h1>Trainingsbuch</h1><div class="tbtns"><button class="ibtn" id="sBtn" aria-label="Einstellungen" aria-expanded="false" aria-controls="spanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="pchip" id="pBtn" aria-expanded="false" aria-controls="ppanel"><span class="av" id="pAv">I</span><span id="pName">Ich</span></button></div></div>
@@ -924,17 +924,19 @@ function syncFriends(){
   [...F.fr.keys()].forEach(id=>{if(!want.has(id)){['f|','fw|'].forEach(k=>{if(subs[k+id]){try{subs[k+id]()}catch{}delete subs[k+id]}});F.fr.delete(id)}});
   want.forEach(id=>{if(!F.fr.has(id))F.fr.set(id,{uid:id,name:fm[id]?.name||fm[id]?.uname||'Freund',uname:fm[id]?.uname||'',state:'loading',workouts:[],weights:[],meta:cleanMeta(),wl:false});subFriend(id)});
 }
+function setHTML(el,h){if(el&&el._h!==h){el._h=h;el.innerHTML=h}}
+function checkGone(id){const fr=F.fr.get(id);if(!fr||!fr.uname||!FB)return;nref(fr.uname).get().then(n=>{const f2=F.fr.get(id);if(f2&&f2.state!=='ok'&&(!n.exists||n.data().uid!==id)){f2.state='gone';onF()}}).catch(()=>{})}
 function subFriend(id){
   if(subs['f|'+id])return;
   subs['f|'+id]=uref(id).onSnapshot(d=>{const fr=F.fr.get(id);if(!fr)return;
-    if(!d.exists){fr.state='pending';onF();return}
+    if(!d.exists){fr.state='pending';checkGone(id);onF();return}
     const x=d.data();fr.state='ok';fr.name=String(x.name||fr.name);fr.photo=okPhoto(x.photo)?x.photo:null;fr.uname=String(x.uname||fr.uname);fr.weights=remoteWeights(x.weights);fr.meta=cleanMeta(x.meta);
-    if(!subs['fw|'+id])subs['fw|'+id]=uref(id).collection('workouts').onSnapshot(ws=>{const f2=F.fr.get(id);if(!f2)return;f2.workouts=ws.docs.map(w=>fromRemote(w.id,w.data())).filter(Boolean);f2.wl=true;f2.prs=null;onF()},()=>{const f2=F.fr.get(id);if(f2){f2.state='pending';delete subs['fw|'+id];onF()}});
+    if(!subs['fw|'+id])subs['fw|'+id]=uref(id).collection('workouts').onSnapshot(ws=>{const f2=F.fr.get(id);if(!f2)return;f2.workouts=ws.docs.map(w=>fromRemote(w.id,w.data())).filter(Boolean);f2.wl=true;f2.prs=null;onF()},()=>{delete subs['fw|'+id];setTimeout(()=>{if(F.fr.has(id)&&ME&&subs['f|'+id]&&!subs['fw|'+id]){try{subs['f|'+id]()}catch{}delete subs['f|'+id];subFriend(id)}},30000)});
     onF()},
-  e=>{delete subs['f|'+id];const fr=F.fr.get(id);if(fr){fr.state=e?.code==='permission-denied'?'pending':'err';fr.workouts=[];onF()}
-    setTimeout(()=>{if(F.fr.has(id)&&!subs['f|'+id]&&ME)subFriend(id)},60000)});
+  e=>{delete subs['f|'+id];const fr=F.fr.get(id);if(fr){if(fr.state!=='gone')fr.state=e?.code==='permission-denied'?'pending':'err';fr.workouts=[];if(e?.code==='permission-denied')checkGone(id);onF()}
+    setTimeout(()=>{const f2=F.fr.get(id);if(f2&&f2.state!=='gone'&&!subs['f|'+id]&&ME)subFriend(id)},60000)});
 }
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&ME)F.fr.forEach((f,id)=>{if(f.state!=='ok'&&!subs['f|'+id])subFriend(id)})});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&ME)F.fr.forEach((f,id)=>{if(f.state!=='ok'&&f.state!=='gone'&&!subs['f|'+id])subFriend(id)})});
 function onF(){if(fT)return;fT=requestAnimationFrame(()=>{fT=0;applyRemote()})}
 function applyRemote(quiet){
   if(S.remote){const fr=F.fr.get(S.remote.uid);if(fr){S.workouts=fr.workouts;S.weights=fr.weights;S.meta=fr.meta}}
@@ -1034,22 +1036,21 @@ function lastOf(m){const l=[...m.workouts].sort(byDate).pop();return l?dDE(l.dat
 function setFMsg(t,m){S.fmsg={t,m};const el=$('fMsg');if(el){el.className='fmsg '+t;el.textContent=m}}
 function renderFriendsTab(){
   const box=$('fBox'),rq=$('fReq'),ls=$('fList'),head=$('fHead');
-  const keepV=$('fUser')?.value||'',foc=document.activeElement?.id==='fUser';
-  if(!hasCfg()){box.innerHTML='<p class="status">Die Online-Funktion ist nicht eingerichtet.</p>';rq.innerHTML=ls.innerHTML='';head.hidden=true;renderFeed();return}
+  if(!hasCfg()){box._k=null;setHTML(box,'<p class="status">Die Online-Funktion ist nicht eingerichtet.</p>');setHTML(rq,'');setHTML(ls,'');head.hidden=true;renderFeed();return}
   if(mode()!=='acc'){
-    box.innerHTML=`<h3>Freunde</h3><p class="status" style="margin:6px 0 12px">Für Freunde brauchst du ein Konto. Deine bisherigen Einträge werden beim Registrieren übernommen.</p><div class="row"><button class="pri" data-a2="gatereg">Konto erstellen</button><button data-a2="gatelogin">Anmelden</button></div>`;
-    rq.innerHTML=ls.innerHTML='';head.hidden=true;renderFeed();return}
-  if(!ME||!isAcc()){box.innerHTML='<h3>Freunde</h3><p class="status">Verbinde …</p>';rq.innerHTML=ls.innerHTML='';head.hidden=true;if(hasCfg())initFB();return}
+    box._k=null;setHTML(box,`<h3>Freunde</h3><p class="status" style="margin:6px 0 12px">Für Freunde brauchst du ein Konto. Deine bisherigen Einträge werden beim Registrieren übernommen.</p><div class="row"><button class="pri" data-a2="gatereg">Konto erstellen</button><button data-a2="gatelogin">Anmelden</button></div>`);
+    setHTML(rq,'');setHTML(ls,'');head.hidden=true;renderFeed();return}
+  if(!ME||!isAcc()){box._k=null;setHTML(box,'<h3>Freunde</h3><p class="status">Verbinde …</p>');setHTML(rq,'');setHTML(ls,'');head.hidden=true;if(hasCfg())initFB();return}
   head.hidden=false;
-  box.innerHTML=`<h3>Freund hinzufügen</h3>
+  if(box._k!==ME.uid){box._k=ME.uid;box._h=null;box.innerHTML=`<h3>Freund hinzufügen</h3>
     <form id="fAdd" class="row" style="margin-top:8px"><label style="flex:1 1 160px">Benutzername deines Freundes<input id="fUser" placeholder="z. B. lisa" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="off" maxlength="21"></label><button class="pri">Anfrage senden</button></form>
     <p id="fMsg" class="fmsg ${S.fmsg?.t||''}" role="status" aria-live="polite">${esc(S.fmsg?.m||'')}</p>
-    <p class="status" style="margin:6px 0 0">Dein Benutzername: <b class="code" style="font-size:20px">${esc(unameOf(ME))}</b> <button class="chip" data-a2="share">Teilen</button></p>`;
-  if(keepV)$('fUser').value=keepV;if(foc)$('fUser').focus();
-  rq.innerHTML=F.reqs.length?`<h3 style="margin:22px 0 4px">Anfragen an dich</h3>${F.reqs.map(r=>`<div class="mrow">${avHTML(r.name||r.uname,null)}<div>${esc(r.name||r.uname)}<small>@${esc(r.uname||'')} möchte mit dir befreundet sein</small></div><button class="pri" data-a2="acc" data-u="${esc(r.uid)}">Annehmen</button><button class="x" data-a2="dec" data-u="${esc(r.uid)}" aria-label="Ablehnen">×</button></div>`).join('')}`:'';
+    <p class="status" style="margin:6px 0 0">Dein Benutzername: <b class="code" style="font-size:20px">${esc(unameOf(ME))}</b> <button class="chip" data-a2="share">Teilen</button></p>`}
+  const fm=$('fMsg');if(fm){fm.className='fmsg '+(S.fmsg?.t||'');fm.textContent=S.fmsg?.m||''}
+  setHTML(rq,F.reqs.length?`<h3 style="margin:22px 0 4px">Anfragen an dich</h3>${F.reqs.map(r=>`<div class="mrow">${avHTML(r.name||r.uname,null)}<div>${esc(r.name||r.uname)}<small>@${esc(r.uname||'')} möchte mit dir befreundet sein</small></div><button class="pri" data-a2="acc" data-u="${esc(r.uid)}">Annehmen</button><button class="x" data-a2="dec" data-u="${esc(r.uid)}" aria-label="Ablehnen">×</button></div>`).join('')}`:'');
   const frs=[...F.fr.values()].sort((a,b)=>(a.state==='ok'?0:1)-(b.state==='ok'?0:1)||a.name.localeCompare(b.name,'de'));
-  ls.innerHTML=frs.map(f=>`<div class="mrow">${avHTML(f.name,f.photo)}<div>${esc(f.name)}<small>${f.state==='ok'?`@${esc(f.uname)} · ${f.workouts.length} Training${f.workouts.length===1?'':'s'} · zuletzt ${lastOf(f)}`:f.state==='loading'?'lädt …':'<span class="pend">Anfrage gesendet – wartet auf Bestätigung</span>'}</small></div>${f.state==='ok'?`<button data-a2="view" data-u="${esc(f.uid)}">Ansehen</button>`:''}<button class="x" data-a2="rm" data-u="${esc(f.uid)}" aria-label="${esc(f.name)} entfernen">×</button></div>`).join('')
-    ||'<p class="status">Noch keine Freunde. Gib oben den Benutzernamen eines Freundes ein.</p>';
+  setHTML(ls,frs.map(f=>`<div class="mrow">${avHTML(f.name,f.photo)}<div>${esc(f.name)}<small>${f.state==='ok'?`@${esc(f.uname)} · ${f.workouts.length} Training${f.workouts.length===1?'':'s'} · zuletzt ${lastOf(f)}`:f.state==='loading'?'lädt …':f.state==='gone'?'<span class="gone">Dieses Konto gibt es nicht mehr – bitte entfernen</span>':'<span class="pend">Wartet auf Bestätigung</span>'}</small></div>${f.state==='ok'?`<button data-a2="view" data-u="${esc(f.uid)}">Ansehen</button>`:''}<button class="x" data-a2="rm" data-u="${esc(f.uid)}" aria-label="${esc(f.name)} entfernen">×</button></div>`).join('')
+    ||'<p class="status">Noch keine Freunde. Gib oben den Benutzernamen eines Freundes ein.</p>');
   renderFeed();
 }
 async function accClick(e){
@@ -1071,15 +1072,15 @@ $('v-freunde').addEventListener('click',accClick);
 $('v-freunde').addEventListener('submit',async e=>{if(e.target.id!=='fAdd')return;e.preventDefault();const v=$('fUser').value;const ok=await addFriend(v);if(ok)$('fUser').value=''});
 function renderFeed(){
   const el=$('feed');
-  if(!ME||!accPid()||![...F.fr.values()].some(f=>f.state==='ok')){el.innerHTML='';return}
+  if(!ME||!accPid()||![...F.fr.values()].some(f=>f.state==='ok')){setHTML(el,'');return}
   const items=[],wk=monday(today()),cnt=[],lp=P.find(x=>x.id===accPid());
   const me={uid:'me',name:lp?lp.name:'Ich',photo:lp?.photo,workouts:F.me.workouts};
   [me,...[...F.fr.values()].filter(f=>f.state==='ok')].forEach(m=>{m.prs=m.prs||prsOf(m.workouts);cnt.push({n:m.uid==='me'?'Du':m.name,k:m.workouts.filter(w=>w.date>=wk).length});m.workouts.forEach(w=>items.push({m,w}))});
   items.sort((a,b)=>byDate(b.w,a.w));
-  el.innerHTML=`<h3>Neues von Freunden</h3>
+  setHTML(el,`<h3>Neues von Freunden</h3>
     <div class="wkchips">${cnt.sort((a,b)=>b.k-a.k).map(x=>`<span>${esc(x.n)}: <b>${x.k}</b> diese Woche</span>`).join('')}</div>
     <div class="feed">${items.slice(0,12).map(({m,w})=>{const rs=m.prs.get(w.id);
-      return `<button type="button" class="frow" data-u="${esc(m.uid)}" data-w="${esc(w.id)}">${avHTML(m.name,m.photo)}<span><b>${esc(m.uid==='me'?'Du':m.name)}</b> · ${dDE(w.date,{weekday:'short',day:'numeric',month:'short'})}${rs?`<span class="pr">${rs.length===1?'Rekord':rs.length+' Rekorde'}</span>`:''}<small>${esc(w.title?w.title+' – ':'')}${w.ex.map(e=>esc(e.n)).join(' · ')}${vol(w)?' · '+fmtVol(vol(w))+' bewegt':''}</small></span></button>`}).join('')||'<p class="status">Noch keine Trainings.</p>'}</div>`;
+      return `<button type="button" class="frow" data-u="${esc(m.uid)}" data-w="${esc(w.id)}">${avHTML(m.name,m.photo)}<span><b>${esc(m.uid==='me'?'Du':m.name)}</b> · ${dDE(w.date,{weekday:'short',day:'numeric',month:'short'})}${rs?`<span class="pr">${rs.length===1?'Rekord':rs.length+' Rekorde'}</span>`:''}<small>${esc(w.title?w.title+' – ':'')}${w.ex.map(e=>esc(e.n)).join(' · ')}${vol(w)?' · '+fmtVol(vol(w))+' bewegt':''}</small></span></button>`}).join('')||'<p class="status">Noch keine Trainings.</p>'}</div>`);
   me.prs=null;
 }
 $('feed').addEventListener('click',e=>{const b=e.target.closest('.frow');if(!b)return;
