@@ -214,6 +214,13 @@ body.ro #newW,body.ro #bform,body.ro #blist .x{display:none!important}
 .sync{font-size:14px;color:var(--mute)}.sync b{color:var(--ok)}
 @media(max-width:600px){nav{justify-content:space-between;gap:0}nav a{padding:12px 5px!important;font-size:14px!important;letter-spacing:-.01em}.top h1{font-size:30px!important}.pchip{padding:5px!important}.pchip span:last-child{display:none}table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;color:var(--mute);white-space:normal}.stack td:empty{display:none}nav a{padding:12px 9px;font-size:15px}.top h1{font-size:32px}.bar{grid-template-columns:5.5em minmax(0,1fr) auto}.grow{grid-template-columns:minmax(0,1fr) 8.5em}}
 @media(max-width:380px){nav a{padding:12px 3px!important;font-size:13px!important}.top h1{font-size:27px!important}}
+.lang{display:inline-flex;gap:6px}
+.lang button{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;min-height:34px;border-radius:999px;border:1px solid var(--line);background:transparent;color:inherit;font:inherit;font-size:13px;font-weight:700;cursor:pointer;opacity:.6}
+.lang button[aria-pressed=true]{opacity:1;border-color:var(--red)}
+.lang svg{width:21px;height:14px;border-radius:2px;display:block;box-shadow:0 0 0 1px rgba(0,0,0,.25);flex:none}
+.lang.gl{position:absolute;top:max(env(safe-area-inset-top),10px);right:max(3vw,10px);z-index:2}
+.lang.gl button{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff}
+.lang.gl button[aria-pressed=true]{border-color:#fff;background:rgba(255,255,255,.2)}
 </style><script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script></head>
 <body>
 <div class="gate" id="gate" hidden><div class="gwrap">
@@ -221,7 +228,7 @@ body.ro #newW,body.ro #bform,body.ro #blist .x{display:none!important}
   <div><h1>Dein Trainingsbuch</h1><p class="gsub">Trainings, Fortschritt und Freunde</p></div></div>
   <div class="gcard" id="gcard"></div>
   <button type="button" class="glocal" id="gLocalBtn">Ohne Konto nutzen</button>
-  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 6 · 20.11.2026</p>
+  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 7 · 20.11.2026</p>
 </div></div>
 <header class="top band"><div class="wrap">
   <div class="toprow"><h1>Dein Trainingsbuch</h1><div class="tbtns"><button class="ibtn" id="sBtn" aria-label="Einstellungen" aria-expanded="false" aria-controls="spanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="pchip" id="pBtn" aria-expanded="false" aria-controls="ppanel"><span class="av" id="pAv">I</span><span id="pName">Ich</span></button></div></div>
@@ -333,6 +340,163 @@ body.ro #newW,body.ro #bform,body.ro #blist .x{display:none!important}
 <datalist id="exnames"></datalist>
 <div id="restbar" hidden role="timer" aria-live="off"><div><small>Pause</small><b id="restT">1:30</b></div><button type="button" data-r="-15">−15 s</button><button type="button" data-r="15">+15 s</button><button type="button" class="pri" data-r="x">Fertig</button></div>
 <div id="toast" role="status"></div>
+<script>
+/* Sprache / Language */
+window.I18N=(()=>{
+let L;try{L=localStorage.getItem('tb-lang')}catch{}
+if(L!=='de'&&L!=='en')L=/^de\b/i.test(navigator.language||'de')?'de':'en';
+const LOC=L==='de'?'de-DE':'en-GB';
+document.documentElement.lang=L;
+const D={
+'Dein Trainingsbuch':'Your Training Log','Trainings, Fortschritt und Freunde':'Workouts, progress and friends',
+'Anmelden':'Sign in','Registrieren':'Sign up','Anmelden oder registrieren':'Sign in or sign up','Benutzername':'Username','Passwort':'Password',
+'Passwort wiederholen':'Repeat password','Passwort anzeigen':'Show password','Passwort verbergen':'Hide password','Angemeldet bleiben':'Stay signed in',
+'Dein Name':'Your name','Dein Name (sehen auch deine Freunde)':'Your name (your friends see it too)','(sehen deine Freunde)':'(your friends see it)',
+'Benutzername: 3–20 Zeichen (a–z, 0–9, Punkt, Minus, Unterstrich). Passwort mind. 6 Zeichen.':'Username: 3–20 characters (a–z, 0–9, dot, hyphen, underscore). Password at least 6 characters.',
+'Gut merken oder vom Handy speichern lassen':'Remember it or let your phone save it','– ohne E-Mail kann es nicht zurückgesetzt werden.':'– without an email it can’t be reset.',
+'Ohne Konto nutzen':'Use without an account','Ohne Konto':'Without an account','Konto erstellen':'Create account','Erstelle Konto …':'Creating account …',
+'Deine Daten bleiben nur auf diesem Handy. Freunde kannst du so nicht hinzufügen – ein Konto kannst du später jederzeit erstellen.':'Your data stays on this phone only. You can’t add friends this way – you can create an account at any time later.',
+"Los geht's":'Let’s go','Zurück zur Anmeldung':'Back to sign in','Verbinde …':'Connecting …','lädt …':'loading …',
+'Benutzername: 3–20 Zeichen, nur a–z, 0–9, Punkt, Minus, Unterstrich':'Username: 3–20 characters, only a–z, 0–9, dot, hyphen, underscore',
+'Bitte deinen Namen eingeben':'Please enter your name','Die Passwörter stimmen nicht überein':'The passwords don’t match',
+'Keine Verbindung – zum Anmelden brauchst du Internet':'No connection – you need internet to sign in','Passwort: mindestens 6 Zeichen':'Password: at least 6 characters',
+'Diesen Benutzernamen gibt es schon':'This username is already taken','Benutzername oder Passwort falsch':'Wrong username or password',
+'Passwort zu kurz (mind. 6 Zeichen)':'Password too short (min. 6 characters)','Zu viele Versuche – bitte später nochmal':'Too many attempts – please try again later',
+'Keine Verbindung – bitte Internet prüfen':'No connection – please check your internet','Anmeldung ist in Firebase noch nicht aktiviert':'Sign-in is not enabled in Firebase yet',
+'Speichern im Konto nicht erlaubt (fehlende Berechtigung)':'Saving to the account is not allowed (missing permission)','Bitte neu anmelden und nochmal versuchen':'Please sign in again and retry',
+'Bitte melde dich wieder an':'Please sign in again','Passwort falsch':'Wrong password','unbekannt':'unknown',
+'Training':'Workout','Übersicht':'Overview','Fortschritt':'Progress','Gewicht':'Weight','Freunde':'Friends','Bereiche':'Sections',
+'Einstellungen':'Settings','Profil':'Profile','Dein Profil':'Your profile','Schließen':'Close','Nach oben':'Back to top',
+'Neues Training':'New workout','+ Neues Training':'+ New workout','+ Training starten':'+ Start workout','Training bearbeiten':'Edit workout',
+'Bereit fürs nächste Training?':'Ready for your next workout?','Letztes Training wiederholen':'Repeat last workout','Letztes Training':'Last workout',
+'Leg ein Training mit Datum an, wähl deine Übungen aus und trag Sätze mit Wiederholungen und Gewicht ein.':'Create a workout with a date, choose your exercises and log sets with reps and weight.',
+'Noch keine Trainings':'No workouts yet','Noch keine Trainings.':'No workouts yet.','noch kein Training':'no workout yet',
+'Noch keine Trainings gespeichert. Starte dein erstes Training – es erscheint dann hier.':'No workouts saved yet. Start your first workout – it will show up here.',
+'Alle Trainings':'All workouts','Datum':'Date','Name (optional)':'Name (optional)','Dauer (Minuten)':'Duration (minutes)','Trainingsdauer':'Workout duration',
+'Übung':'Exercise','Übungen':'Exercises','Übung hinzufügen':'Add exercise','Übung suchen oder neue eingeben':'Search exercise or enter a new one',
+'Oder Übungen übernehmen aus':'Or copy exercises from','Früheres Training wählen …':'Choose an earlier workout …','Bitte wählen …':'Please choose …',
+'Satz':'Set','Sätze':'Sets','+ Satz':'+ Set','Wdh.':'reps','Max. Wdh.':'Max reps','Einheit':'Unit','Notiz':'Note',
+'Training speichern':'Save workout','Verwerfen':'Discard','Abbrechen':'Cancel','Speichern':'Save','Löschen':'Delete','Entfernen':'Remove',
+'Wirklich löschen?':'Really delete?','Endgültig löschen':'Delete permanently','Fertig':'Done','Hinzufügen':'Add','Anlegen':'Create','Ansehen':'View','Teilen':'Share',
+'Trag mindestens einen Satz mit Wiederholungen ein':'Enter at least one set with reps','Bitte ein Datum wählen':'Please choose a date',
+'Training gespeichert':'Workout saved','Training gelöscht':'Workout deleted','Gespeichert – neuer Rekord!':'Saved – new record!',
+'· Tippe nach jedem Satz auf ✓ für die Pause':'· Tap ✓ after each set for the rest timer','Tippe nach jedem Satz auf ✓ für die Pause':'Tap ✓ after each set for the rest timer',
+'Pause':'Rest','Neu starten':'Restart','Bewegt bisher:':'Lifted so far:','Bewegt':'Lifted','Bewegtes Gewicht':'Weight lifted','Meiste bewegt':'Most lifted',
+'Diese Woche':'This week','diese Woche':'this week','Dieser Monat':'This month','Trainings seit Montag':'Workouts since Monday','Letzte 30 Tage':'Last 30 days',
+'Ø pro Woche':'Ø per week','letzte 8 Wochen':'last 8 weeks','Wochen':'Weeks','Serie':'Streak','insgesamt':'total','Seit Beginn':'Since start',
+'Keine Trainings in den letzten 5 Wochen.':'No workouts in the last 5 weeks.','mit mind. 1 Training':'with at least 1 workout',
+'Rot = Training. Tipp auf einen Tag, um das Training zu öffnen oder eins nachzutragen.':'Red = workout. Tap a day to open the workout or add one later.',
+'Tipp in der Liste auf ein Training, um es anzusehen.':'Tap a workout in the list to view it.','Vorheriger Monat':'Previous month','Nächster Monat':'Next month',
+'Rekord':'Record','Rekorde':'Records','Sätze pro Muskelgruppe':'Sets per muscle group','Übungen Muskelgruppen zuordnen':'Assign exercises to muscle groups',
+'Sobald du Übungen benutzt, kannst du sie hier zuordnen. Standardübungen sind schon zugeordnet.':'Once you use exercises, you can assign them here. Standard exercises are already assigned.',
+'Muskelgruppe für diese Übung':'Muscle group for this exercise',
+'Balken: letzte 7 Tage · Strich: Wochenschnitt der 4 Wochen davor':'Bars: last 7 days · Line: weekly average of the 4 weeks before',
+'Rekord = mehr Gewicht als je zuvor – oder mehr Wiederholungen beim bisherigen Höchstgewicht. „Bewegt“ = Wiederholungen × Gewicht, immer in kg bzw. Tonnen.':'Record = more weight than ever before – or more reps at your previous top weight. “Lifted” = reps × weight, always in kg or tonnes.',
+'Fortschritt der Übung':'Exercise progress','Kennzahl':'Metric','Zeitraum':'Period','Top':'Top','Top-Gewicht':'Top weight','Bestes Gewicht':'Best weight',
+'Alles':'All','1 J':'1 Y','Verlauf':'History','Aktuell':'Current','Ziel':'Goal','Bis zum Ziel':'To goal','7-Tage-Schnitt':'7-day average',
+'Noch keine Übungen':'No exercises yet','noch zu wenig Daten':'not enough data yet','mind. 2 Trainings im Zeitraum':'at least 2 workouts in this period',
+'Sobald du Trainings speicherst, siehst du hier zu jeder Übung deinen Fortschritt.':'Once you save workouts, you’ll see your progress for every exercise here.',
+'Keine Trainings mit dieser Übung im gewählten Zeitraum.':'No workouts with this exercise in the selected period.',
+'Gewicht eintragen':'Log weight','Gewicht (kg)':'Weight (kg)','Zielgewicht (kg, optional)':'Goal weight (kg, optional)','Einträge':'Entries','Verlauf des Körpergewichts':'Body weight history',
+'Noch keine Einträge.':'No entries yet.','Trag dein Gewicht ein – hier entsteht dann deine Kurve.':'Log your weight – your chart will appear here.',
+'Bitte ein gültiges Gewicht eingeben':'Please enter a valid weight','Eintrag gelöscht':'Entry deleted',
+'Freund hinzufügen':'Add friend','Benutzername deines Freundes':'Your friend’s username','Anfrage senden':'Send request','Dein Benutzername:':'Your username:',
+'Benutzernamen teilen':'Share username','Deine Freunde':'Your friends','Anfragen an dich':'Requests to you','Annehmen':'Accept','Ablehnen':'Decline',
+'Wartet auf Bestätigung':'Waiting for confirmation','Neues von Freunden':'News from friends','Freund':'Friend','die Person':'this person',
+'Noch keine Freunde. Gib oben den Benutzernamen eines Freundes ein.':'No friends yet. Enter a friend’s username above.',
+'Für Freunde brauchst du ein Konto. Deine bisherigen Einträge werden beim Registrieren übernommen.':'You need an account for friends. Your existing entries are kept when you sign up.',
+'Dieses Konto gibt es nicht mehr – bitte entfernen':'This account no longer exists – please remove it','Das bist du selbst':'That’s you',
+'Bitte einen gültigen Benutzernamen eingeben (a–z, 0–9, . - _)':'Please enter a valid username (a–z, 0–9, . - _)','Noch nicht verbunden – bitte kurz warten':'Not connected yet – please wait a moment',
+'Sobald hier Trainings eingetragen werden, siehst du sie.':'As soon as workouts are logged here, you’ll see them.',
+'Zu deinen Freunden':'To your friends','Zurück zu meinem Profil':'Back to my profile','Benutzername kopiert':'Username copied',
+'Konto':'Account','Angemeldet als':'Signed in as','Abmelden':'Sign out','Abgemeldet':'Signed out','Konto wechseln':'Switch account','Konto löschen':'Delete account','Konto gelöscht':'Account deleted',
+'Melde dich mit dem anderen Konto an':'Sign in with the other account','online gesichert':'backed up online','wartet auf Verbindung':'waiting for connection',
+'wartet auf Verbindung – Änderungen werden später hochgeladen':'waiting for connection – changes will be uploaded later',
+'Löscht dein Konto und alle Online-Daten (Trainings, Gewicht, Freunde). Auf diesem Handy bleiben deine Daten erhalten. Zur Sicherheit bitte dein Passwort eingeben.':'Deletes your account and all online data (workouts, weight, friends). Your data stays on this phone. For safety, please enter your password.',
+'Die Online-Funktion ist nicht eingerichtet.':'The online feature is not set up.','Die Online-Funktion ist nicht eingerichtet. Nutze die App ohne Konto.':'The online feature is not set up. Use the app without an account.',
+'Du nutzt die App ohne Konto – deine Daten sind nur auf diesem Handy. Mit einem Konto kannst du Freunde hinzufügen und deine Daten online sichern. Deine bisherigen Einträge werden beim Registrieren übernommen.':'You’re using the app without an account – your data is only on this phone. With an account you can add friends and back up your data online. Your existing entries are kept when you sign up.',
+'Ich':'Me','Neues Profil':'New profile','Profil löschen':'Delete profile','Foto wählen':'Choose photo','Profilbild gespeichert':'Profile picture saved','Profilbild entfernt':'Profile picture removed',
+'Dieses Bild konnte nicht gelesen werden':'This image couldn’t be read','Bitte einen Namen eingeben':'Please enter a name','Diesen Namen gibt es schon':'This name already exists',
+'Profile ohne Konto liegen nur auf diesem Gerät, ein Profil mit Konto zusätzlich online. Das Backup enthält alle Profile. Sichere es ab und zu, z. B. in iCloud Drive, Google Drive oder per Mail an dich selbst. Beim Einlesen werden Einträge ergänzt, nichts wird gelöscht.':'Profiles without an account are stored on this device only; a profile with an account is also stored online. The backup contains all profiles. Save it now and then, e.g. to iCloud Drive, Google Drive or by email to yourself. Importing adds entries, nothing is deleted.',
+'Datensicherung':'Backup','Backup speichern':'Save backup','Backup einlesen':'Import backup','Noch kein Backup gemacht':'No backup made yet','Backup erstellt':'Backup created',
+'Backup fehlgeschlagen':'Backup failed','Diese Datei ist kein Trainingsbuch-Backup':'This file is not a Training Log backup','Speichern auf dem Gerät fehlgeschlagen':'Saving on this device failed',
+'Nichts Neues gefunden':'Nothing new found',
+'Trainingstimer':'Workout timer','Läuft beim Eintragen eines neuen Trainings mit und speichert die Trainingsdauer.':'Runs while you log a new workout and saves the workout duration.',
+'Pausentimer':'Rest timer','Tippe nach einem Satz auf ✓ – dann läuft die Pause bis zum nächsten Satz runter.':'Tap ✓ after a set – the rest then counts down until your next set.',
+'Pausenlänge':'Rest length','Ton & Vibration':'Sound & vibration','Signal, wenn die Pause vorbei ist (Vibration nur auf Android).':'Signal when the rest is over (vibration on Android only).',
+'Sprache':'Language','Erstes Mal – viel Erfolg!':'First time – good luck!','ohne Gewicht':'no weight','Stark – neuer Rekord!':'Strong – new record!','Gewicht':'Weight',
+'Brust':'Chest','Rücken':'Back','Schultern':'Shoulders','Bizeps':'Biceps','Trizeps':'Triceps','Beine':'Legs','Po':'Glutes','Waden':'Calves','Bauch':'Abs','Sonstiges':'Other',
+'Bankdrücken':'Bench press','Schrägbankdrücken':'Incline bench press','Kurzhantel-Bankdrücken':'Dumbbell bench press','Butterfly':'Pec fly','Liegestütze':'Push-ups',
+'Kniebeuge':'Squat','Frontkniebeuge':'Front squat','Beinpresse':'Leg press','Ausfallschritte':'Lunges','Beinstrecker':'Leg extension','Beinbeuger':'Leg curl',
+'Rumänisches Kreuzheben':'Romanian deadlift','Kreuzheben':'Deadlift','Wadenheben':'Calf raises','Klimmzüge':'Pull-ups','Latzug':'Lat pulldown',
+'Langhantelrudern':'Barbell row','Kurzhantelrudern':'Dumbbell row','Kabelrudern':'Cable row','Schulterdrücken':'Shoulder press','Seitheben':'Lateral raises',
+'Bizepscurls':'Biceps curls','Hammercurls':'Hammer curls','Trizepsdrücken am Kabel':'Cable triceps pushdown','French Press':'Skull crushers',
+'Montag':'Monday','Dienstag':'Tuesday','Mittwoch':'Wednesday','Donnerstag':'Thursday','Freitag':'Friday','Samstag':'Saturday','Sonntag':'Sunday',
+'z. B. Max':'e.g. Max','z. B. lisa':'e.g. lisa','z. B. max.muster':'e.g. max.smith','Name, z. B. Lisa':'Name, e.g. Lisa','z. B. 82,4':'e.g. 82.4','z. B. 78':'e.g. 78','z. B. 60':'e.g. 60',
+'z. B. Push, Beine, Ganzkörper':'e.g. Push, Legs, Full body','z. B. Sitz Stufe 4, enger Griff, Schulter zwickt':'e.g. seat level 4, close grip, shoulder twinges'
+};
+const n=(c,one,many)=>c+' '+(+c===1?one:many);
+const P=[
+[/^(\d+) Trainings?$/,m=>n(m[1],'workout','workouts')],[/^in (\d+) Trainings?$/,m=>'in '+n(m[1],'workout','workouts')],[/^in einem Training$/,()=>'in one workout'],
+[/^(\d+) (Satz|Sätze)$/,m=>n(m[1],'set','sets')],[/^(\d+) (Übung|Übungen)$/,m=>n(m[1],'exercise','exercises')],[/^(\d+) Wdh\.$/,m=>m[1]+' reps'],
+[/^(.+) \((\d+) Übungen?\)$/,m=>m[1]+' ('+n(m[2],'exercise','exercises')+')'],[/^(.+) \((\d+)×\)$/,m=>t(m[1])+' ('+m[2]+'×)'],
+[/^(\d+) diese Woche$/,m=>m[1]+' this week'],[/^: Gewicht (.+)$/,m=>': weight '+m[1]],[/^: Wiederholungen (.+)$/,m=>': reps '+t(m[1])],[/^\(vorher (.+)\)$/,m=>'(before '+t(m[1])+')'],
+[/^Stark – (\d+) neue Rekorde!$/,m=>'Strong – '+m[1]+' new records!'],[/^Training vom (.+) gespeichert\.$/,m=>'Workout from '+m[1]+' saved.'],
+[/^Die ältesten (\d+) Einträge sind nur im Diagramm zu sehen\.$/,m=>'The oldest '+m[1]+' entries are only shown in the chart.'],
+[/^@(.+) möchte mit dir befreundet sein$/,m=>'@'+m[1]+' wants to be your friend'],[/^Notiz: (.+)$/,m=>'Note: '+m[1]],[/^(\d+) Wdh\. · (.+)$/,m=>m[1]+' reps · '+m[2]],
+[/^zuletzt noch kein Training$/,()=>'no workout yet'],[/^zuletzt (.+)$/,m=>'last '+m[1]],[/^seit (.+)$/,m=>'since '+m[1]],[/^Ziel (.+)$/,m=>'Goal '+m[1]],
+[/^(.+) bewegt$/,m=>m[1]+' lifted'],[/^Letztes Backup: (.+)$/,m=>'Last backup: '+m[1]],
+[/^Letztes Mal \((.+)\): (.+) – leere Felder übernehmen diese Werte$/,m=>'Last time ('+m[1]+'): '+m[2]+' – empty fields use these values'],
+[/^Anfrage an (.+) gesendet ✓$/,m=>'Request sent to '+m[1]+' ✓'],[/^Anfrage an (.+) wurde bereits gesendet$/,m=>'A request to '+m[1]+' was already sent'],
+[/^Benutzer „(.+)“ nicht gefunden$/,m=>'User “'+m[1]+'” not found'],[/^(.+) ist schon dein Freund$/,m=>m[1]+' is already your friend'],
+[/^(.+) hatte dir schon eine Anfrage geschickt – ihr seid jetzt Freunde$/,m=>m[1]+' had already sent you a request – you’re now friends'],
+[/^Du und (.+) seid jetzt Freunde$/,m=>'You and '+m[1]+' are now friends'],[/^(.+) hat deine Anfrage angenommen$/,m=>m[1]+' accepted your request'],
+[/^Konto „(.+)“ erstellt$/,m=>'Account “'+m[1]+'” created'],[/^Angemeldet als (.+)$/,m=>'Signed in as '+m[1]],
+[/^Konto „(.+)“ endgültig löschen\?$/,m=>'Delete account “'+m[1]+'” permanently?'],[/^Profil „(.+)“ gelöscht$/,m=>'Profile “'+m[1]+'” deleted'],
+[/^Wirklich „(.+)“ mit allen Daten löschen\?$/,m=>'Really delete “'+m[1]+'” with all data?'],[/^„(.+)“ löschen$/,m=>'Delete “'+m[1]+'”'],
+[/^Zurück zu „(.+)“$/,m=>'Back to “'+m[1]+'”'],[/^Hallo (.+)!$/,m=>'Hi '+m[1]+'!'],[/^Dein Profil: (.+)$/,m=>'Your profile: '+t(m[1])],[/^Profil: (.+)$/,m=>'Profile: '+t(m[1])],
+[/^Profil von (.+)$/,m=>m[1]+'’s profile'],[/^Training von (.+)$/,m=>m[1]+'’s workout'],
+[/^Du siehst das Profil von (.+) \(nur ansehen\)\.$/,m=>'You’re viewing '+m[1]+'’s profile (view only).'],
+[/^Du siehst dieses Profil nur an\. Ändern oder löschen kann es nur (.+) selbst\.$/,m=>'You can only view this profile. Only '+m[1]+' can change or delete it.'],
+[/^Satz (\d+) Gewicht in (\S+)$/,m=>'Set '+m[1]+' weight in '+m[2]],[/^Satz (\d+) Wiederholungen$/,m=>'Set '+m[1]+' reps'],[/^Satz (\d+) erledigt$/,m=>'Set '+m[1]+' done'],
+[/^Satz (\d+) entfernen$/,m=>'Remove set '+m[1]],[/^Übung (.+) entfernen$/,m=>'Remove exercise '+t(m[1])],[/^Eintrag (.+) löschen$/,m=>'Delete entry '+m[1]],
+[/^Training vom (.+) öffnen$/,m=>'Open workout from '+m[1]],[/^Muskelgruppe für (.+)$/,m=>'Muscle group for '+t(m[1])],[/^(.+) entfernen$/,m=>'Remove '+m[1]],
+[/^\+ (.+)$/,m=>'+ '+t(m[1])],[/^(.+) kg am (.+) gespeichert$/,m=>m[1]+' kg saved for '+m[2]],[/^Veränderung (.+)$/,m=>'Change in '+t(m[1]).toLowerCase()],
+[/^Gespeichert – (\d+) neue Rekorde!$/,m=>'Saved – '+m[1]+' new records!'],[/^Online speichern fehlgeschlagen \((.+)\)$/,m=>'Saving online failed ('+m[1]+')'],
+[/^Fehler: (.+)$/,m=>'Error: '+t(m[1])],[/^(.+) – noch kein Konto\? Dann oben auf „Registrieren“ tippen\.?$/,m=>t(m[1])+' – no account yet? Tap “Sign up” above.'],
+[/^(.+): Training nachtragen$/,m=>m[1]+': add a workout'],[/^(.+): (\d+) Trainings?(, mit Rekord)?$/,m=>m[1]+': '+n(m[2],'workout','workouts')+(m[3]?', with record':'')],
+[/^(\d+) (Eintrag|Einträge) übernommen(?:, (\d+) neues? Profile?)?$/,m=>n(m[1],'entry','entries')+' imported'+(m[3]?', '+n(m[3],'new profile','new profiles'):'')],
+[/^Benutzername: (.+)$/,m=>'Username: '+m[1]],[/^(.+) → (.+)$/,m=>t(m[1])+' → '+t(m[2])],
+[/^Füg mich bei „Dein Trainingsbuch“ als Freund hinzu\. Mein Benutzername: (.+)$/,m=>'Add me as a friend on “Your Training Log”. My username: '+m[1]],
+[/^Dein Trainingsbuch – Backup$/,()=>'Your Training Log – Backup']
+];
+function one(s){if(s in D)return D[s];for(const[r,fn]of P){const m=s.match(r);if(m)return fn(m)}return null}
+function t(s){if(L==='de'||s==null)return s;s=String(s);const a=s.match(/^(\s*)([\s\S]*?)(\s*)$/),core=a[2];if(!core||!/[A-Za-zÄÖÜäöüß]/.test(core))return s;
+  let r=D[core]??null;
+  if(r==null&&/ · |^· | ·$/.test(core))r=core.split(/(\s*·\s*)/).map(p=>/·/.test(p)||!p?p:(one(p)??p)).join('');
+  if(r==null)r=one(core);
+  return r==null?s:a[1]+r+a[3]}
+const ATTR=['placeholder','aria-label','title','data-l','alt'];
+const skip=el=>!el||/^(SCRIPT|STYLE|TEXTAREA|INPUT)$/.test(el.nodeName)||el.closest?.('[translate=no]');
+const skipA=el=>!el||/^(SCRIPT|STYLE)$/.test(el.nodeName)||el.closest?.('[translate=no]');
+function txt(nd){const v=nd.data;if(v===nd.__o)return;nd.__d=v;const r=t(v);nd.__o=r;if(r!==v)nd.data=r}
+function att(el){if(!el.getAttribute||skipA(el))return;const m=el.__a||(el.__a={});for(const a of ATTR){const v=el.getAttribute(a);if(v==null||(m[a]&&m[a]===v))continue;const r=t(v);m[a]=r;if(r!==v)el.setAttribute(a,r)}}
+function walk(root){if(root.nodeType===3){if(!skip(root.parentElement))txt(root);return}
+  if(root.nodeType!==1||skipA(root))return;att(root);if(skip(root))return;
+  const w=document.createTreeWalker(root,5,{acceptNode:x=>x.nodeType===1?(skipA(x)?2:1):1});let x;
+  while(x=w.nextNode()){if(x.nodeType===3){if(!skip(x.parentElement))txt(x)}else att(x)}}
+if(L!=='de'){walk(document.documentElement);
+  new MutationObserver(ms=>{for(const m of ms){if(m.type==='childList')m.addedNodes.forEach(walk);else if(m.type==='characterData'){if(!skip(m.target.parentElement))txt(m.target)}else att(m.target)}})
+  .observe(document.documentElement,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTR})}
+const FL={de:'<svg viewBox="0 0 5 3" aria-hidden="true"><rect width="5" height="1" fill="#000"/><rect y="1" width="5" height="1" fill="#dd0000"/><rect y="2" width="5" height="1" fill="#ffce00"/></svg>',
+  en:'<svg viewBox="0 0 60 30" aria-hidden="true"><clipPath id="ukc"><path d="M30,15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath><path d="M0,0v30h60v-30z" fill="#012169"/><path d="M0,0 60,30M60,0 0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 60,30M60,0 0,30" clip-path="url(#ukc)" stroke="#C8102E" stroke-width="4"/><path d="M30,0v30M0,15h60" stroke="#fff" stroke-width="10"/><path d="M30,0v30M0,15h60" stroke="#C8102E" stroke-width="6"/></svg>'};
+const sw=cls=>`<div class="lang ${cls||''}" role="group" aria-label="Sprache / Language" translate="no">${[['de','Deutsch','DE'],['en','English','EN']].map(([k,nm,ab])=>`<button type="button" data-lang="${k}" aria-pressed="${L===k}" title="${nm}">${FL[k]}<span>${ab}</span></button>`).join('')}</div>`;
+document.addEventListener('click',e=>{const b=e.target.closest?.('[data-lang]');if(!b)return;e.preventDefault();const k=b.dataset.lang;if(k===L)return;
+  try{localStorage.setItem('tb-lang',k)}catch{}location.reload()});
+document.getElementById('gate')?.insertAdjacentHTML('afterbegin',sw('gl'));
+return{lang:L,loc:LOC,t,sw};
+})();
+</script>
 <script src="config.js"></script>
 
 <script>
@@ -345,14 +509,14 @@ const $=id=>document.getElementById(id);
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{toast('Speichern auf dem Gerät fehlgeschlagen')}},del(k){try{localStorage.removeItem(k)}catch{}}};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=v=>{const n=parseFloat(String(v??'').replace(',','.'));return isFinite(n)?n:null};
-const f=(n,d=1)=>n==null?'–':n.toLocaleString('de-DE',{maximumFractionDigits:d});
+const f=(n,d=1)=>n==null?'–':n.toLocaleString(I18N.loc,{maximumFractionDigits:d});
 const pad=n=>String(n).padStart(2,'0');
 const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const today=()=>iso(new Date());
 const daysAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return iso(d)};
 const monday=ds=>{const d=new Date(ds+'T12:00:00');d.setDate(d.getDate()-((d.getDay()+6)%7));return iso(d)};
 const ms=d=>new Date(d+'T12:00:00').getTime();
-const dDE=(d,o={day:'2-digit',month:'2-digit',year:'numeric'})=>new Date(d+'T12:00:00').toLocaleDateString('de-DE',o);
+const dDE=(d,o={day:'2-digit',month:'2-digit',year:'numeric'})=>new Date(d+'T12:00:00').toLocaleDateString(I18N.loc,o);
 const LB=0.45359237,toKg=(v,u)=>u==='lbs'?v*LB:v,fromKg=(k,u)=>u==='lbs'?k/LB:k;
 const fmtVol=kg=>kg>=1000?f(kg/1000,2)+' t':f(kg,0)+' kg';
 const e1rm=(r,w)=>!w||!r?0:r===1?w:w*(1+r/30);
@@ -430,7 +594,7 @@ function renderSum(){
   document.body.classList.toggle('ro',S.ro);
   const p=S.ro?{name:rm?.name||'…',photo:rm?.photo}:curP();$('pName').textContent=p.name;$('pAv').outerHTML=avHTML(p.name,p.photo).replace('<span class="av ','<span id="pAv" class="av ');
   $('pBtn').setAttribute('aria-label',S.ro?'Profil von '+p.name+' ansehen':'Dein Profil: '+p.name);
-  $('exnames').innerHTML=allNames().map(n=>`<option value="${esc(n)}">`).join('');
+  $('exnames').innerHTML=allNames().map(n=>`<option value="${esc(I18N.t(n))}">`).join('');
 }
 function renderProfiles(){renderPlist();
   const fr=S.ro&&F.fr.get(S.remote?.uid);
@@ -514,7 +678,7 @@ function exHTML(e,i){
     <div class="exh"><h3>${esc(e.n)}${known?`<span class="tag">${esc(groupOf(e.n))}</span>`:''}</h3><div class="nw"><span class="seg useg" role="group" aria-label="Einheit">${['kg','lbs'].map(x=>`<button type="button" data-a="unit" data-u="${x}" aria-pressed="${u===x}">${x}</button>`).join('')}</span>
       <button class="x" data-a="up" title="Nach oben" aria-label="Nach oben" ${i?'':'disabled'}>↑</button>
       <button class="x" data-a="rmEx" aria-label="Übung ${esc(e.n)} entfernen">×</button></div></div>
-    ${known?'':`<label style="margin:6px 0 8px">Muskelgruppe für diese Übung<select data-f="grp"><option value="">Bitte wählen …</option>${GROUPS.map(g=>`<option>${g}</option>`).join('')}</select></label>`}
+    ${known?'':`<label style="margin:6px 0 8px">Muskelgruppe für diese Übung<select data-f="grp"><option value="">Bitte wählen …</option>${GROUPS.map(g=>`<option value="${g}">${g}</option>`).join('')}</select></label>`}
     <p class="prev">${p?`Letztes Mal (${dDE(p.date,{day:'2-digit',month:'2-digit'})}): ${esc(setsText(p.sets,u))} – leere Felder übernehmen diese Werte`:'Erstes Mal – viel Erfolg!'}</p>
     <div class="sets">
       <div class="set seth"><span>Satz</span><span>Wdh.</span><span>${u}</span><span>✓</span><span></span></div>
@@ -529,7 +693,7 @@ function exHTML(e,i){
   </div>`}
 function addExercise(name){
   name=name.trim().replace(/\s+/g,' ');if(!name)return;
-  const known=allNames().find(n=>n.toLowerCase()===name.toLowerCase());
+  const lc=name.toLowerCase(),known=allNames().find(n=>n.toLowerCase()===lc)||allNames().find(n=>I18N.t(n).toLowerCase()===lc);
   if(!known){S.meta.custom=[...S.meta.custom,name];cloudMember()}
   const n=known||name,p=prevFor(n);
   draft.ex.push({n,u:lastUnit(n)||lastUnit()||'kg',note:'',s:p?p.sets.map(()=>({r:'',w:'',p:''})):[{r:'',w:'',p:''},{r:'',w:'',p:''},{r:'',w:'',p:''}]});
@@ -642,9 +806,9 @@ function renderOverview(){
   // Kalender
   const [y,m]=S.cal.split('-').map(Number),days=new Date(y,m,0).getDate(),lead=(new Date(y,m-1,1).getDay()+6)%7;
   const byDay=new Map();S.workouts.forEach(w=>{if(!byDay.has(w.date))byDay.set(w.date,[]);byDay.get(w.date).push(w)});
-  $('calT').textContent=new Date(y,m-1,1).toLocaleDateString('de-DE',{month:'long',year:'numeric'});
+  $('calT').textContent=new Date(y,m-1,1).toLocaleDateString(I18N.loc,{month:'long',year:'numeric'});
   $('calN').disabled=S.cal>=mo;
-  let h=['Mo','Di','Mi','Do','Fr','Sa','So'].map(d=>`<span class="h">${d}</span>`).join('')+'<span></span>'.repeat(lead);
+  let h=(I18N.lang==='de'?['Mo','Di','Mi','Do','Fr','Sa','So']:['Mo','Tu','We','Th','Fr','Sa','Su']).map(d=>`<span class="h">${d}</span>`).join('')+'<span></span>'.repeat(lead);
   for(let d=1;d<=days;d++){const ds=`${y}-${pad(m)}-${pad(d)}`,ws=byDay.get(ds),fut=ds>t,pr=ws&&ws.some(w=>S.prs.has(w.id));
     const lab=dDE(ds,{weekday:'long',day:'numeric',month:'long'})+(ws?`: ${ws.length} Training${ws.length>1?'s':''}${pr?', mit Rekord':''}`:fut?'':': Training nachtragen');
     h+=`<button type="button" data-d="${ds}" class="${ws?'t':''}${ds===t?' today':''}${fut?' f':''}" ${fut?'disabled':''} aria-label="${lab}">${d}${ws&&ws.length>1?'<i></i>':''}${pr?'<span class="s">★</span>':''}</button>`}
@@ -659,7 +823,7 @@ function renderOverview(){
     :'<p class="empty" style="padding:0">Keine Trainings in den letzten 5 Wochen.</p>';
   renderFeed();
   const ns=usedNames();
-  $('grows').innerHTML=ns.length?ns.map(n=>`<div class="grow"><span>${esc(n)}</span><select data-n="${esc(n)}" ${S.ro?'disabled':''} aria-label="Muskelgruppe für ${esc(n)}">${GROUPS.map(g=>`<option${groupOf(n)===g?' selected':''}>${g}</option>`).join('')}</select></div>`).join('')
+  $('grows').innerHTML=ns.length?ns.map(n=>`<div class="grow"><span>${esc(n)}</span><select data-n="${esc(n)}" ${S.ro?'disabled':''} aria-label="Muskelgruppe für ${esc(n)}">${GROUPS.map(g=>`<option value="${g}"${groupOf(n)===g?' selected':''}>${g}</option>`).join('')}</select></div>`).join('')
     :'<p class="status">Sobald du Übungen benutzt, kannst du sie hier zuordnen. Standardübungen sind schon zugeordnet.</p>';
 }
 $('cal').addEventListener('click',e=>{const b=e.target.closest('button[data-d]');if(!b||b.disabled)return;const ds=b.dataset.d;
@@ -774,7 +938,7 @@ function renderBody(){
   $('blist').innerHTML=rev.length?`<table><tbody>${rev.slice(0,60).map((x,i)=>{const p=rev[i+1],d=p?x.kg-p.kg:null;
     return `<tr><td class="nw">${dDE(x.date)}</td><td class="r"><b>${f(x.kg)} kg</b></td><td class="r" style="color:var(--mute)">${d==null?'':(d>0?'+':'')+f(d)}</td><td class="r" style="width:44px;padding:0"><button class="x" data-del="${x.date}" aria-label="Eintrag ${dDE(x.date)} löschen">×</button></td></tr>`}).join('')}</tbody></table>${rev.length>60?`<p class="status">Die ältesten ${rev.length-60} Einträge sind nur im Diagramm zu sehen.</p>`:''}`
     :'<p class="empty">Noch keine Einträge.</p>';
-  const gi=$('goal');if(document.activeElement!==gi)gi.value=goal!=null?String(goal).replace('.',','):'';
+  const gi=$('goal');if(document.activeElement!==gi)gi.value=goal!=null?(I18N.lang==='de'?String(goal).replace('.',','):String(goal)):'';
 }
 $('bdate').value=today();
 $('bform').addEventListener('submit',e=>{e.preventDefault();
@@ -801,14 +965,14 @@ addEventListener('hashchange',route);
 function renderAll(){computePRs();renderSum();renderEditor();renderList();if(S.view==='freunde')renderFriendsTab();if(S.view==='uebersicht')renderOverview();if(S.view==='fortschritt')renderProgress();if(S.view==='gewicht')renderBody()}
 
 /* ---------- Backup ---------- */
-function showBk(){const t=LS.get('tb-lastbackup',null);$('lastBk').textContent=t?'Letztes Backup: '+new Date(t).toLocaleDateString('de-DE'):'Noch kein Backup gemacht'}
+function showBk(){const t=LS.get('tb-lastbackup',null);$('lastBk').textContent=t?'Letztes Backup: '+new Date(t).toLocaleDateString(I18N.loc):'Noch kein Backup gemacht'}
 $('exp').addEventListener('click',async()=>{
   saveLocal();
   const profiles=P.map(p=>({id:p.id,name:p.name,data:LS.get('tb-data-'+p.id,null)||{workouts:[],weights:[],meta:{}}}));
   const data=JSON.stringify({app:'trainingsbuch',v:2,exported:new Date().toISOString(),profiles});
   const name='trainingsbuch-backup-'+today()+'.json',file=new File([data],name,{type:'application/json'});
   try{
-    if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:'Dein Trainingsbuch – Backup'});
+    if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:I18N.t('Dein Trainingsbuch – Backup')});
     else{const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
     LS.set('tb-lastbackup',Date.now());showBk();toast('Backup erstellt');
   }catch(e){if(e?.name!=='AbortError')toast('Backup fehlgeschlagen')}
@@ -1070,7 +1234,7 @@ async function accClick(e){
   else if(a==='dec'){uref(ME.uid).collection('requests').doc(b.dataset.u).delete().catch(()=>{});F.reqs=F.reqs.filter(x=>x.uid!==b.dataset.u);renderFriendsTab()}
   else if(a==='rm'){if(!arm(b,'?'))return;removeFriend(b.dataset.u)}
   else if(a==='view')viewRemote(b.dataset.u);
-  else if(a==='share'){const u=unameOf(ME),txt=`Füg mich bei „Dein Trainingsbuch“ als Freund hinzu. Mein Benutzername: ${u}`;
+  else if(a==='share'){const u=unameOf(ME),txt=I18N.t(`Füg mich bei „Dein Trainingsbuch“ als Freund hinzu. Mein Benutzername: ${u}`);
     try{if(navigator.share){await navigator.share({text:txt});return}}catch(err){if(err?.name==='AbortError')return}
     try{await navigator.clipboard.writeText(u);toast('Benutzername kopiert')}catch{toast('Benutzername: '+u,4000)}}
 }
@@ -1209,7 +1373,8 @@ function renderSettings(){
       <div class="seg" id="restSeg">${[45,60,90,120,180,240].map(v=>`<button type="button" data-rest="${v}" aria-pressed="${SET.rest===v}">${v<60?v+' s':Math.floor(v/60)+(v%60?':'+pad(v%60):'')+' min'}</button>`).join('')}</div>
       <label class="sw" style="margin-top:10px"><span><b>Ton & Vibration</b><small>Signal, wenn die Pause vorbei ist (Vibration nur auf Android).</small></span><input type="checkbox" role="switch" data-s="snd" ${SET.snd?'checked':''}></label>
     </div>
-    <p class="status" style="margin:14px 0 0;text-align:center">Dein Trainingsbuch · Version 6 · 20.11.2026</p>`;
+    <div class="seth" style="margin:16px 0 6px">Sprache</div>${I18N.sw()}
+    <p class="status" style="margin:14px 0 0;text-align:center">Dein Trainingsbuch · Version 7 · 20.11.2026</p>`;
 }
 $('sBody').addEventListener('change',e=>{const k=e.target.dataset.s;if(!k)return;SET[k]=e.target.checked;saveSet();if(k==='rt'&&!SET.rt)stopRest();renderSettings();if(draft)renderEditor()});
 $('sBody').addEventListener('click',e=>{const b=e.target.closest('[data-rest]');if(!b)return;SET.rest=+b.dataset.rest;saveSet();renderSettings()});
