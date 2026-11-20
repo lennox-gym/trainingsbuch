@@ -137,7 +137,7 @@ td small{display:block;color:var(--mute);font-size:14px}
 @media(min-width:960px){.wgrid{grid-template-columns:minmax(0,1fr) 340px}}
 footer{padding-bottom:max(env(safe-area-inset-bottom),28px)!important;border-top:1px solid var(--line)}
 footer .row{align-items:center}
-#toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9;max-width:90vw;text-align:center}
+#toast{z-index:60!important;position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9;max-width:90vw;text-align:center}
 #toast.on{opacity:1}
 @media(prefers-reduced-motion:reduce){#toast{transition:none}}
 .scroll{overflow-x:auto}
@@ -195,6 +195,7 @@ body.gated{overflow:hidden}
 .glocal{background:none;border:0;color:#fff;text-decoration:underline;font-weight:500;justify-self:center;opacity:.9}
 .ghint{font-size:14px;color:var(--mute);margin:0}
 .hideold{display:none!important}
+.gerr{color:var(--red);font-weight:600;margin:0}.gerr:empty{display:none}
 #robar{background:var(--goldbg);color:var(--ink);padding:10px max(4vw,16px);display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 #robar[hidden]{display:none}
 body.ro #newW,body.ro #bform,body.ro #blist .x{display:none!important}
@@ -948,7 +949,7 @@ function viewRemote(id,sel){
   storeDraft();S.remote={uid:id};S.ro=true;draft=null;S.justSaved=null;S.sel=sel||null;
   applyRemote(true);renderAll();togglePanel(false);
 }
-const authMsg=e=>({'auth/email-already-in-use':'Diesen Benutzernamen gibt es schon','auth/invalid-credential':'Benutzername oder Passwort falsch','auth/wrong-password':'Benutzername oder Passwort falsch','auth/user-not-found':'Benutzername oder Passwort falsch','auth/invalid-login-credentials':'Benutzername oder Passwort falsch','auth/weak-password':'Passwort zu kurz (mind. 6 Zeichen)','auth/too-many-requests':'Zu viele Versuche – bitte später nochmal','auth/network-request-failed':'Keine Verbindung – bitte Internet prüfen','auth/operation-not-allowed':'Anmeldung ist in Firebase noch nicht aktiviert'}[e?.code]||'Fehler: '+(e?.code||e?.message||'unbekannt'));
+const authMsg=e=>({'auth/email-already-in-use':'Diesen Benutzernamen gibt es schon','auth/invalid-credential':'Benutzername oder Passwort falsch','auth/wrong-password':'Benutzername oder Passwort falsch','auth/user-not-found':'Benutzername oder Passwort falsch','auth/invalid-login-credentials':'Benutzername oder Passwort falsch','auth/weak-password':'Passwort zu kurz (mind. 6 Zeichen)','auth/too-many-requests':'Zu viele Versuche – bitte später nochmal','auth/network-request-failed':'Keine Verbindung – bitte Internet prüfen','auth/operation-not-allowed':'Anmeldung ist in Firebase noch nicht aktiviert','permission-denied':'Speichern im Konto nicht erlaubt (fehlende Berechtigung)','unavailable':'Keine Verbindung – bitte Internet prüfen'}[e?.code]||'Fehler: '+(e?.code||e?.message||'unbekannt'));
 let busy=false;
 async function doAuth(create){
   if(busy)return;
@@ -1104,7 +1105,7 @@ function renderGate(){
       <label>Benutzername<input name="username" id="gUser" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20" required value="${esc(k[0]||'')}"></label>
       <label>Passwort<div class="pw"><input name="password" id="gPw" type="password" autocomplete="current-password" required minlength="6"><button type="button" class="eye" data-eye aria-label="Passwort anzeigen" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label>
       <label class="chk"><input type="checkbox" id="gKeep" checked> Angemeldet bleiben</label>
-      <button class="pri" ${dis}>${G2.busy?'Anmelden …':'Anmelden'}</button>
+      <p class="gerr" role="alert"></p><button class="pri" ${dis}>${G2.busy?'Anmelden …':'Anmelden'}</button>
     </form>`:`
     <form id="gReg" method="post" action="#" autocomplete="on">
       <label>Dein Name <span style="font-weight:400">(sehen deine Freunde)</span><input id="gName" autocomplete="given-name" maxlength="30" required placeholder="z. B. Max"></label>
@@ -1112,7 +1113,7 @@ function renderGate(){
       <label>Passwort<div class="pw"><input name="password" id="gPw" type="password" autocomplete="new-password" required minlength="6"><button type="button" class="eye" data-eye aria-label="Passwort anzeigen" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label>
       <label>Passwort wiederholen<div class="pw"><input id="gPw2" type="password" autocomplete="new-password" required minlength="6"></div></label>
       <label class="chk"><input type="checkbox" id="gKeep" checked> Angemeldet bleiben</label>
-      <button class="pri" ${dis}>${G2.busy?'Erstelle Konto …':'Konto erstellen'}</button>
+      <p class="gerr" role="alert"></p><button class="pri" ${dis}>${G2.busy?'Erstelle Konto …':'Konto erstellen'}</button>
       <p class="ghint">Benutzername: 3–20 Zeichen (a–z, 0–9, Punkt, Minus, Unterstrich). Passwort mind. 6 Zeichen. <b>Gut merken oder vom Handy speichern lassen</b> – ohne E-Mail kann es nicht zurückgesetzt werden.</p>
     </form>`);
   if(t==='login'&&k.length)setTimeout(()=>$('gPw')?.focus(),50);
@@ -1130,23 +1131,25 @@ $('gcard').addEventListener('submit',async e=>{
     let p=curP();if(p.uid){p={id:'p'+uid(),name:n};P.push(p)}p.name=n;LS.set('tb-profiles',P);
     if(pid!==p.id){storeDraft();pid=p.id}LS.set('tb-mode','local');loadProfile();cleanupProfiles();hideGate();renderAll();toast(`Hallo ${n}!`);return}
   if(G2.busy)return;
+  const gErr=m=>{const x=e.target.querySelector('.gerr');if(x)x.textContent=m;else toast(m,4000)};gErr('');
   e.target.querySelectorAll('#gPw,#gPw2').forEach(i=>i.type='password');
   const u=normUser($('gUser').value),pw=$('gPw').value,keep=$('gKeep').checked;
-  if(!validUser(u)){toast('Benutzername: 3–20 Zeichen, nur a–z, 0–9, Punkt, Minus, Unterstrich',3500);return}
-  if(pw.length<6){toast('Passwort: mindestens 6 Zeichen');return}
+  if(!validUser(u)){gErr('Benutzername: 3–20 Zeichen, nur a–z, 0–9, Punkt, Minus, Unterstrich');return}
+  if(pw.length<6){gErr('Passwort: mindestens 6 Zeichen');return}
   let name='';
-  if(id==='gReg'){name=$('gName').value.trim();if(!name){toast('Bitte deinen Namen eingeben');return}
-    if(pw!==$('gPw2').value){toast('Die Passwörter stimmen nicht überein');return}}
-  const f=await initFB();if(!f){toast('Keine Verbindung – zum Anmelden brauchst du Internet',3500);return}
+  if(id==='gReg'){name=$('gName').value.trim();if(!name){gErr('Bitte deinen Namen eingeben');return}
+    if(pw!==$('gPw2').value){gErr('Die Passwörter stimmen nicht überein');return}}
+  const f=await initFB();if(!f){gErr('Keine Verbindung – zum Anmelden brauchst du Internet');return}
   G2.busy=true;const sb=e.target.querySelector('button.pri'),sbt=sb.textContent;sb.disabled=true;sb.textContent=id==='gReg'?'Erstelle Konto …':'Anmelden …';
   try{
     try{await FB.auth.setPersistence(keep?firebase.auth.Auth.Persistence.LOCAL:firebase.auth.Auth.Persistence.SESSION)}catch{}
     const cred=id==='gReg'?await FB.auth.createUserWithEmailAndPassword(mailOf(u),pw):await FB.auth.signInWithEmailAndPassword(mailOf(u),pw);
     storeCred(u,pw,name);
     await enterAccount(cred.user,id==='gReg',name);
-  }catch(err){toast(authMsg(err),3500)}
+  }catch(err){gErr(authMsg(err)+(id==='gLogin'&&/invalid|not-found|wrong-password/.test(err?.code||'')?' – noch kein Konto? Dann oben auf „Registrieren“ tippen.':''))}
   G2.busy=false;if(sb.isConnected){sb.disabled=false;sb.textContent=sbt}
 });
+$('gcard').addEventListener('input',e=>{const x=e.target.closest('form')?.querySelector('.gerr');if(x)x.textContent=''});
 async function storeCred(u,pw,name){try{if(window.PasswordCredential&&navigator.credentials)await navigator.credentials.store(new PasswordCredential({id:u,password:pw,name:name||u}))}catch{}}
 function cleanupProfiles(){
   const before=P.length;
