@@ -482,7 +482,7 @@ function renderEditor(){
     el.innerHTML=(js?(rs?`<div class="prbox" style="margin-top:0"><h3>Stark – ${rs.length===1?'neuer Rekord':rs.length+' neue Rekorde'}!</h3>${prList(rs)}</div>`
         :`<p class="status" style="margin-bottom:12px">Training vom ${dDE(js.date)} gespeichert.</p>`):'')
       +`<h2>Bereit fürs nächste Training?</h2>
-      <p style="color:var(--mute);margin:8px 0 16px">Leg ein Training mit Datum an, wähl deine Übungen aus und trag Sätze, Wiederholungen, Gewicht und Anstrengung ein.</p>
+      <p style="color:var(--mute);margin:8px 0 16px">Leg ein Training mit Datum an, wähl deine Übungen aus und trag Sätze mit Wiederholungen und Gewicht ein.</p>
       <div class="row"><button class="pri" data-a="new" style="font-size:18px;padding:12px 22px">+ Training starten</button>
       ${last?`<button data-a="dup" data-id="${last.id}">Letztes Training wiederholen</button>`:''}</div>`;
     return}
