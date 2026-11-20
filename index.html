@@ -234,7 +234,7 @@ body.ro #newW,body.ro #bform,body.ro #blist .x{display:none!important}
   <div><h1>Dein Trainingsbuch</h1><p class="gsub">Trainings, Fortschritt und Freunde</p></div></div>
   <div class="gcard" id="gcard"></div>
   <button type="button" class="glocal" id="gLocalBtn">Ohne Konto nutzen</button>
-  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 9 · 20.11.2026</p>
+  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 10 · 20.11.2026</p>
 </div></div>
 <header class="top band"><div class="wrap">
   <div class="toprow"><h1>Dein Trainingsbuch</h1><div class="tbtns"><button class="ibtn" id="sBtn" aria-label="Einstellungen" aria-expanded="false" aria-controls="spanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="pchip" id="pBtn" aria-expanded="false" aria-controls="ppanel"><span class="av" id="pAv">I</span><span id="pName">Ich</span></button></div></div>
@@ -269,7 +269,7 @@ body.ro #newW,body.ro #bform,body.ro #blist .x{display:none!important}
   <div class="tgrid">
     <div id="editor" class="panel"></div>
     <div>
-      <div class="lhead"><h2>Alle Trainings</h2><button class="pri" id="newW">+ Neues Training</button></div>
+      <div class="lhead"><h2>Alle Trainings</h2><button class="pri" id="newW" style="display:none">+ Neues Training</button></div>
       <div id="wlist"></div>
     </div>
   </div>
@@ -772,8 +772,7 @@ function renderEditor(){
         :`<p class="status" style="margin-bottom:12px">Training vom ${dDE(js.date)} gespeichert.</p>`):'')
       +`<h2>Bereit fürs nächste Training?</h2>
       <p style="color:var(--mute);margin:8px 0 16px">Leg ein Training mit Datum an, wähl deine Übungen aus und trag Sätze mit Wiederholungen und Gewicht ein.</p>
-      <div class="row"><button class="pri" data-a="new" style="font-size:18px;padding:12px 22px">+ Training starten</button>
-      ${last?`<button data-a="dup" data-id="${last.id}">Letztes Training wiederholen</button>`:''}<button data-pa="open">Trainingspläne</button></div>`;
+      <div class="row">${last?`<button data-a="dup" data-id="${last.id}">Letztes Training wiederholen</button>`:''}<button class="pri" data-pa="open" style="font-size:18px;padding:12px 22px">Trainingspläne</button></div>`;
     return}
   const u=usage().sort((a,b)=>b.last.localeCompare(a.last)||b.c-a.c).slice(0,8).map(x=>x.n).filter(n=>!draft.ex.some(e=>e.n===n));
   const past=[...S.workouts].sort(byDate).reverse().filter(w=>w.id!==draft.id).slice(0,15);
@@ -1499,7 +1498,7 @@ function renderSettings(){
       <label class="sw" style="margin-top:10px"><span><b>Ton & Vibration</b><small>Signal, wenn die Pause vorbei ist (Vibration nur auf Android).</small></span><input type="checkbox" role="switch" data-s="snd" ${SET.snd?'checked':''}></label>
     </div>
     <div class="seth" style="margin:16px 0 6px">Sprache</div>${I18N.sw()}
-    <p class="status" style="margin:14px 0 0;text-align:center">Dein Trainingsbuch · Version 9 · 20.11.2026</p>`;
+    <p class="status" style="margin:14px 0 0;text-align:center">Dein Trainingsbuch · Version 10 · 20.11.2026</p>`;
 }
 $('sBody').addEventListener('change',e=>{const k=e.target.dataset.s;if(!k)return;SET[k]=e.target.checked;saveSet();if(k==='rt'&&!SET.rt)stopRest();renderSettings();if(draft)renderEditor()});
 $('sBody').addEventListener('click',e=>{const b=e.target.closest('[data-rest]');if(!b)return;SET.rest=+b.dataset.rest;saveSet();renderSettings()});
