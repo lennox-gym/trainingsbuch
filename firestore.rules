@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isMe(uid) { return signedIn() && request.auth.uid == uid; }
+    function isFriendOf(uid) {
+      return signedIn() && request.auth.uid in get(/databases/$(database)/documents/users/$(uid)).data.friends;
+    }
+
+    // Benutzername -> Konto. Einzeln abrufbar (zum Hinzufügen), nicht auflistbar.
+    match /names/{name} {
+      allow get: if signedIn();
+      allow list, update: if false;
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    // Profil: nur ich schreibe; lesen dürfen ich und Leute, die ich als Freund eingetragen habe.
+    match /users/{uid} {
+      allow read: if isMe(uid) || (signedIn() && request.auth.uid in resource.data.friends);
+      allow write: if isMe(uid);
+
+      match /workouts/{workout} {
+        allow read: if isMe(uid) || isFriendOf(uid);
+        allow write: if isMe(uid);
+      }
+
+      // Freundschaftsanfragen: nur der Absender schreibt, nur der Empfänger liest/löscht.
+      match /requests/{from} {
+        allow read, delete: if isMe(uid);
+        allow create, update: if signedIn() && request.auth.uid == from;
+      }
+    }
+  }
+}

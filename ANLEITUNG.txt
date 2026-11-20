@@ -1,0 +1,88 @@
+TRAININGSBUCH – KURZANLEITUNG
+=============================
+
+Firebase ist bereits fertig eingerichtet (Projekt "trainingsbuch-4d8c6"):
+Datenbank, Sicherheitsregeln und Anmeldung sind aktiv, config.js ist
+ausgefüllt. Du musst nur noch hochladen.
+
+
+1. HOCHLADEN
+------------
+- Den ganzen Ordner hochladen, z. B. bei https://app.netlify.com/drop.
+  Wenn schon eine Version online ist: alte Dateien durch diese ersetzen.
+- Auf dem Handy die App einmal mit Internet öffnen. Falls noch die alte
+  Version erscheint: App schließen und nochmal öffnen.
+
+
+2. KONTO ERSTELLEN / ANMELDEN
+-----------------------------
+- Beim ersten Öffnen erscheint der Anmeldebildschirm.
+- „Registrieren“: deinen Namen (sehen deine Freunde), einen
+  Benutzernamen und ein Passwort eingeben → „Konto erstellen“.
+- Benutzername: 3–20 Zeichen, nur a–z, 0–9, Punkt, Minus, Unterstrich.
+- Passwort: mindestens 6 Zeichen. Das Handy bietet an, es im
+  Passwort-Manager zu speichern (iCloud-Schlüsselbund / Google) –
+  am besten annehmen. Ohne E-Mail kann es nicht zurückgesetzt werden.
+- „Angemeldet bleiben“ (Standard): Du bleibst angemeldet und musst
+  dich nicht jedes Mal neu anmelden. Ohne Haken wirst du beim
+  Schließen der App abgemeldet.
+- Wer die App vorher schon ohne Konto benutzt hat: Beim Registrieren
+  werden die bisherigen Einträge ins neue Konto übernommen.
+- „Ohne Konto nutzen“ (unten): App nur auf diesem Handy, ohne Freunde.
+  Ein Konto kannst du später oben rechts unter deinem Namen erstellen.
+- Abmelden / Konto wechseln: oben rechts auf deinen Namen tippen.
+
+
+3. FREUNDE (eigener Tab „Freunde“)
+----------------------------------
+- Benutzernamen deines Freundes eingeben → „Anfrage senden“.
+  Grün = Anfrage gesendet. Rot = Benutzer nicht gefunden, Anfrage
+  schon gesendet oder ihr seid schon befreundet.
+- Dein Freund sieht die Anfrage im Tab „Freunde“ → „Annehmen“.
+- „Neues von Freunden“ zeigt die letzten Trainings eurer Gruppe.
+- „Ansehen“: Trainings, Kalender, Fortschritt und Gewicht eines
+  Freundes – nur ansehen. Ändern oder löschen kann nur er selbst
+  (das sperrt auch der Server).
+
+
+4. PROFIL & EINSTELLUNGEN
+-------------------------
+- Oben rechts auf dein Bild/Initial tippen: Profilbild wählen, Name
+  ändern, Abmelden, Konto wechseln, Konto löschen.
+- Zahnrad oben rechts = Einstellungen:
+  · Trainingstimer an/aus – läuft beim Eintragen mit, Dauer wird
+    gespeichert.
+  · Pausentimer an/aus – nach jedem Satz auf ✓ tippen, dann läuft
+    die Pause runter (Länge einstellbar, Ton/Vibration optional).
+
+
+5. ZWEITES / NEUES HANDY
+------------------------
+- App öffnen → oben rechts auf den Namen → mit Benutzername und
+  Passwort anmelden. Deine Trainings werden zusammengeführt und sind
+  auf allen Handys gleich.
+
+
+SICHERHEIT
+----------
+- Nur du kannst deine eigenen Daten ändern.
+- Lesen dürfen nur Freunde, deren Anfrage du angenommen hast
+  (bzw. denen du selbst eine Anfrage geschickt hast).
+- Benutzernamen kann niemand auflisten oder durchsuchen – man muss
+  den genauen Namen kennen, und selbst dann nur eine Anfrage senden.
+- „Konto löschen“ entfernt dein Konto und alle Online-Daten. Auf dem
+  Handy bleiben deine Daten erhalten.
+
+
+GUT ZU WISSEN
+-------------
+- Ohne Internet funktioniert alles weiter. Änderungen werden
+  hochgeladen, sobald wieder eine Verbindung da ist.
+- Ohne Konto funktioniert die App wie bisher, nur ohne Freunde.
+- Mehrere Personen können dasselbe Handy nutzen: abmelden und mit dem
+  anderen Konto anmelden („Konto wechseln“). Jede Person sieht nur
+  ihre eigenen Daten.
+- Das Backup unten in der App funktioniert weiterhin.
+- Firebase ist im kostenlosen Spark-Tarif, ohne Zahlungsdaten.
+- Die Datei firestore.rules ist nur zur Info – die Regeln sind in
+  Firebase schon veröffentlicht.
