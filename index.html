@@ -7,11 +7,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Training">
+<meta name="apple-mobile-web-app-title" content="Dein Trainingsbuch">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Trainingsbuch</title>
+<title>Dein Trainingsbuch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -182,7 +182,7 @@ body.gated{overflow:hidden}
 .gwrap{max-width:420px;margin:0 auto;display:grid;gap:18px}
 .glogo{display:flex;align-items:center;gap:14px;margin-top:4vh}
 .glogo svg{width:64px;height:64px;flex:none;filter:drop-shadow(0 6px 14px rgba(0,0,0,.25))}
-.glogo h1{font-size:40px}
+.glogo h1{font-size:clamp(30px,9vw,40px)}
 .gsub{margin:0;opacity:.92}
 .gcard{background:var(--bg);color:var(--ink);border-radius:18px;padding:20px;box-shadow:0 14px 40px rgba(0,0,0,.28)}
 .gtabs{display:grid;grid-template-columns:1fr 1fr;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:16px}
@@ -212,19 +212,19 @@ body.ro #newW,body.ro #bform,body.ro #blist .x{display:none!important}
 .wkchips{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
 .wkchips span{background:var(--card);border-radius:99px;padding:4px 12px;font-size:15px}
 .sync{font-size:14px;color:var(--mute)}.sync b{color:var(--ok)}
-@media(max-width:600px){nav{justify-content:space-between;gap:0}nav a{padding:12px 5px!important;font-size:14px!important;letter-spacing:-.01em}.top h1{font-size:30px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pchip{padding:5px!important}.pchip span:last-child{display:none}table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;color:var(--mute);white-space:normal}.stack td:empty{display:none}nav a{padding:12px 9px;font-size:15px}.top h1{font-size:32px}.bar{grid-template-columns:5.5em minmax(0,1fr) auto}.grow{grid-template-columns:minmax(0,1fr) 8.5em}}
-@media(max-width:380px){nav a{padding:12px 3px!important;font-size:13px!important}.top h1{font-size:26px!important}}
+@media(max-width:600px){nav{justify-content:space-between;gap:0}nav a{padding:12px 5px!important;font-size:14px!important;letter-spacing:-.01em}.top h1{font-size:30px!important}.pchip{padding:5px!important}.pchip span:last-child{display:none}table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;color:var(--mute);white-space:normal}.stack td:empty{display:none}nav a{padding:12px 9px;font-size:15px}.top h1{font-size:32px}.bar{grid-template-columns:5.5em minmax(0,1fr) auto}.grow{grid-template-columns:minmax(0,1fr) 8.5em}}
+@media(max-width:380px){nav a{padding:12px 3px!important;font-size:13px!important}.top h1{font-size:27px!important}}
 </style><script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script></head>
 <body>
 <div class="gate" id="gate" hidden><div class="gwrap">
   <div class="glogo"><svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#15171a"/><circle cx="32" cy="32" r="23" fill="#d4252d"/><circle cx="32" cy="32" r="19.2" fill="#a8181f"/><circle cx="32" cy="32" r="17.3" fill="#d4252d"/><circle cx="32" cy="32" r="7" fill="#a8181f"/><circle cx="32" cy="32" r="4.5" fill="#15171a"/><rect x="17.6" y="27.5" width="3.2" height="9" rx="1.6" fill="#15171a"/><rect x="43.2" y="27.5" width="3.2" height="9" rx="1.6" fill="#15171a"/></svg>
-  <div><h1>Trainingsbuch</h1><p class="gsub">Trainings, Fortschritt und Freunde</p></div></div>
+  <div><h1>Dein Trainingsbuch</h1><p class="gsub">Trainings, Fortschritt und Freunde</p></div></div>
   <div class="gcard" id="gcard"></div>
   <button type="button" class="glocal" id="gLocalBtn">Ohne Konto nutzen</button>
-  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 5 · 20.11.2026</p>
+  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 6 · 20.11.2026</p>
 </div></div>
 <header class="top band"><div class="wrap">
-  <div class="toprow"><h1>Trainingsbuch</h1><div class="tbtns"><button class="ibtn" id="sBtn" aria-label="Einstellungen" aria-expanded="false" aria-controls="spanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="pchip" id="pBtn" aria-expanded="false" aria-controls="ppanel"><span class="av" id="pAv">I</span><span id="pName">Ich</span></button></div></div>
+  <div class="toprow"><h1>Dein Trainingsbuch</h1><div class="tbtns"><button class="ibtn" id="sBtn" aria-label="Einstellungen" aria-expanded="false" aria-controls="spanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="pchip" id="pBtn" aria-expanded="false" aria-controls="ppanel"><span class="av" id="pAv">I</span><span id="pName">Ich</span></button></div></div>
   <p class="sum" id="sum"></p>
   <div class="ppanel" id="ppanel" hidden>
     <div class="lhead" style="margin:0"><h3 id="pTitle">Profil</h3><button class="ghost" id="pClose">Schließen</button></div>
@@ -808,7 +808,7 @@ $('exp').addEventListener('click',async()=>{
   const data=JSON.stringify({app:'trainingsbuch',v:2,exported:new Date().toISOString(),profiles});
   const name='trainingsbuch-backup-'+today()+'.json',file=new File([data],name,{type:'application/json'});
   try{
-    if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:'Trainingsbuch Backup'});
+    if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:'Dein Trainingsbuch – Backup'});
     else{const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
     LS.set('tb-lastbackup',Date.now());showBk();toast('Backup erstellt');
   }catch(e){if(e?.name!=='AbortError')toast('Backup fehlgeschlagen')}
@@ -1070,7 +1070,7 @@ async function accClick(e){
   else if(a==='dec'){uref(ME.uid).collection('requests').doc(b.dataset.u).delete().catch(()=>{});F.reqs=F.reqs.filter(x=>x.uid!==b.dataset.u);renderFriendsTab()}
   else if(a==='rm'){if(!arm(b,'?'))return;removeFriend(b.dataset.u)}
   else if(a==='view')viewRemote(b.dataset.u);
-  else if(a==='share'){const u=unameOf(ME),txt=`Füg mich im Trainingsbuch als Freund hinzu. Mein Benutzername: ${u}`;
+  else if(a==='share'){const u=unameOf(ME),txt=`Füg mich bei „Dein Trainingsbuch“ als Freund hinzu. Mein Benutzername: ${u}`;
     try{if(navigator.share){await navigator.share({text:txt});return}}catch(err){if(err?.name==='AbortError')return}
     try{await navigator.clipboard.writeText(u);toast('Benutzername kopiert')}catch{toast('Benutzername: '+u,4000)}}
 }
@@ -1209,7 +1209,7 @@ function renderSettings(){
       <div class="seg" id="restSeg">${[45,60,90,120,180,240].map(v=>`<button type="button" data-rest="${v}" aria-pressed="${SET.rest===v}">${v<60?v+' s':Math.floor(v/60)+(v%60?':'+pad(v%60):'')+' min'}</button>`).join('')}</div>
       <label class="sw" style="margin-top:10px"><span><b>Ton & Vibration</b><small>Signal, wenn die Pause vorbei ist (Vibration nur auf Android).</small></span><input type="checkbox" role="switch" data-s="snd" ${SET.snd?'checked':''}></label>
     </div>
-    <p class="status" style="margin:14px 0 0;text-align:center">Trainingsbuch · Version 5 · 20.11.2026</p>`;
+    <p class="status" style="margin:14px 0 0;text-align:center">Dein Trainingsbuch · Version 6 · 20.11.2026</p>`;
 }
 $('sBody').addEventListener('change',e=>{const k=e.target.dataset.s;if(!k)return;SET[k]=e.target.checked;saveSet();if(k==='rt'&&!SET.rt)stopRest();renderSettings();if(draft)renderEditor()});
 $('sBody').addEventListener('click',e=>{const b=e.target.closest('[data-rest]');if(!b)return;SET.rest=+b.dataset.rest;saveSet();renderSettings()});
