@@ -273,7 +273,7 @@ body.chatting{overflow:hidden}
   <div><h1>Dein Trainingsbuch</h1><p class="gsub">Trainings, Fortschritt und Freunde</p></div></div>
   <div class="gcard" id="gcard"></div>
   <button type="button" class="glocal" id="gLocalBtn">Ohne Konto nutzen</button>
-  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 13 · 20.11.2026</p>
+  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 14 · 21.11.2026</p>
 </div></div>
 <header class="top band"><div class="wrap">
   <div class="toprow"><h1>Dein Trainingsbuch</h1><div class="tbtns"><button class="ibtn" id="sBtn" aria-label="Einstellungen" aria-expanded="false" aria-controls="spanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="pchip" id="pBtn" aria-expanded="false" aria-controls="ppanel"><span class="av" id="pAv">I</span><span id="pName">Ich</span></button></div></div>
@@ -805,7 +805,7 @@ function pDefDays(p){return{fb:3,ul:4,ppl:6,bro:5,arn:6}[p.id]}
 function pDayHTML(p,i,a){const day=p.w[i],ex=pDay(day,a),gs=[...new Set(ex.map(x=>groupOf(x.n)))].filter(g=>g!=='Sonstiges').map(g=>I18N.t(g));
   return `<div class="ex pday"><div class="lhead" style="margin:0"><h3>${esc(LG(...day.n))}</h3></div><p class="prev" style="margin:2px 0 8px">${esc(gs.join(' · '))}</p>
     <ul class="plx">${ex.map(x=>`<li><span>${esc(I18N.t(x.n))} ${guideBtn(x.n)}</span><span>${x.sets} × ${x.reps}</span></li>`).join('')}</ul>
-    <button class="pri" data-pa="go" data-p="${p.id}" data-d="${i}" style="margin-top:10px;width:auto">${LG('Dieses Training starten','Start this workout')}</button></div>`}
+    <div class="row" style="margin-top:10px"><button class="pri" data-pa="go" data-p="${p.id}" data-d="${i}" style="width:auto">${LG('Dieses Training starten','Start this workout')}</button>${canChat()?`<button data-pa="preshare" data-p="${p.id}" data-d="${i}" style="width:auto">💬 ${LG('Teilen','Share')}</button>`:''}</div></div>`}
 function renderPlans(el){
   const st=S.plan,head=(t,back)=>`<div class="lhead"><h2>${t}</h2><button class="ghost" data-pa="${back?'back':'close'}">${back?LG('Zurück','Back'):LG('Schließen','Close')}</button></div>`;
   let h='';
@@ -849,6 +849,7 @@ function planStart(p,i){const a=S.plan.fromQuiz?S.plan.a:{...PDEF,days:pDefDays(
   draft.ex=pDay(day,a).map(x=>({n:x.n,u:lastUnit(x.n)||lastUnit()||'kg',note:'',t:x.reps,s:Array.from({length:x.sets},()=>({r:'',w:'',p:''}))}));
   S.plan=null;storeDraft();renderEditor();renderList();renderSum();$('editor').scrollIntoView({block:'start'});toast(LG(`Training „${draft.title}“ gestartet`,`Workout “${draft.title}” started`))}
 $('editor').addEventListener('click',e=>{const b=e.target.closest('[data-pa]');if(!b||S.ro)return;const a=b.dataset.pa;
+  if(a==='preshare'){const pl=prePayload(b.dataset.p,+b.dataset.d);if(pl)sharePlanTo(pl);return}
   if(a==='wshare'){const w=draft&&S.workouts.find(x=>x.id===draft.id);if(w)shareWorkout(w);return}
   if(a==='fromDraft'){if(!draft||!draft.ex.length){toast(LG('Füg zuerst Übungen hinzu','Add some exercises first'));return}
     const name=(draft.title||'').trim()||LG('Mein Training','My workout');saveTpl({id:uid(),name,ex:draft.ex.map(x=>({n:x.n,s:x.s.length||2}))});toast(LG(`Als Plan „${name}“ gespeichert`,`Saved as plan “${name}”`),3000);return}
@@ -866,7 +867,7 @@ $('editor').addEventListener('click',e=>{const b=e.target.closest('[data-pa]');i
   else if(a==='tdel'){if(!tp||!arm(b,'?'))return;delTpl(tp.id);toast(LG(`Plan „${tp.name}“ gelöscht`,`Plan “${tp.name}” deleted`))}
   else if(a==='tnew'){go('mk',{ed:{id:uid(),name:'',ex:[]}})}
   else if(a==='tedit'){if(tp)go('mk',{ed:JSON.parse(JSON.stringify(tp))})}
-  else if(a==='tshare'){if(tp)go('share',{t:tp.id})}
+  else if(a==='tshare'){if(tp)sharePlanTo(planPayload(tp));return}
   else if(a==='tsend'){const f=F.fr.get(b.dataset.u);if(tp&&f){sendMsg(f.uid,{plan:planPayload(tp)});toast(LG(`Plan an ${f.name} geschickt`,`Plan sent to ${f.name}`),3000);const h=st.hist.pop();if(h)Object.assign(st,h)}}
   else if(a==='tsm'||a==='tsp'){if(ed&&ed.ex[ix])ed.ex[ix].s=Math.min(10,Math.max(1,ed.ex[ix].s+(a==='tsp'?1:-1)));renderEditor();return}
   else if(a==='trm'){if(ed)ed.ex.splice(ix,1);renderEditor();return}
@@ -1525,7 +1526,7 @@ function exName(v){v=String(v||'').trim().replace(/\s+/g,' ');if(!v)return'';con
 const canShare=()=>!!(ME&&isAcc(accPid())&&[...F.fr.values()].some(f=>f.state==='ok'));
 function tplCard(t){return `<div class="ex pday"><div class="lhead" style="margin:0"><h3>${esc(t.name)}</h3></div><p class="prev" style="margin:2px 0 8px">${t.ex.length} ${LG(t.ex.length===1?'Übung':'Übungen',t.ex.length===1?'exercise':'exercises')}</p>
   <ul class="plx">${t.ex.map(e=>`<li><span>${esc(I18N.t(e.n))} ${guideBtn(e.n)}</span><span>${e.s} ${LG(e.s===1?'Satz':'Sätze',e.s===1?'set':'sets')}</span></li>`).join('')}</ul>
-  <div class="row" style="margin-top:10px"><button class="pri" data-pa="tgo" data-t="${esc(t.id)}" style="width:auto">${LG('Starten','Start')}</button><button data-pa="tedit" data-t="${esc(t.id)}" style="width:auto">${LG('Bearbeiten','Edit')}</button>${canShare()?`<button data-pa="tshare" data-t="${esc(t.id)}" style="width:auto">${LG('Teilen','Share')}</button>`:''}<button class="x" data-pa="tdel" data-t="${esc(t.id)}" aria-label="${LG('Plan löschen','Delete plan')}">×</button></div></div>`}
+  <div class="row" style="margin-top:10px"><button class="pri" data-pa="tgo" data-t="${esc(t.id)}" style="width:auto">${LG('Starten','Start')}</button><button data-pa="tedit" data-t="${esc(t.id)}" style="width:auto">${LG('Bearbeiten','Edit')}</button>${canChat()?`<button data-pa="tshare" data-t="${esc(t.id)}" style="width:auto">${LG('Teilen','Share')}</button>`:''}<button class="x" data-pa="tdel" data-t="${esc(t.id)}" aria-label="${LG('Plan löschen','Delete plan')}">×</button></div></div>`}
 function mkHTML(ed){return `<label>${LG('Name des Plans','Plan name')}<input id="tName" value="${esc(ed.name)}" maxlength="60" autocomplete="off" placeholder="${LG('z. B. Push-Tag','e.g. Push day')}"></label>
   <div style="margin-top:10px">${ed.ex.map((e,i)=>`<div class="tex"><span class="tn">${esc(I18N.t(e.n))} ${guideBtn(e.n)}</span><span class="tset"><button type="button" data-pa="tsm" data-i="${i}" aria-label="${LG('Weniger Sätze','Fewer sets')}">−</button><b>${e.s} ${LG(e.s===1?'Satz':'Sätze',e.s===1?'set':'sets')}</b><button type="button" data-pa="tsp" data-i="${i}" aria-label="${LG('Mehr Sätze','More sets')}">+</button></span><button type="button" class="x" data-pa="tup" data-i="${i}" ${i?'':'disabled'} aria-label="${LG('Nach oben','Move up')}">↑</button><button type="button" class="x" data-pa="trm" data-i="${i}" aria-label="${LG('Entfernen','Remove')}">×</button></div>`).join('')||`<p class="status">${LG('Noch keine Übungen im Plan.','No exercises in this plan yet.')}</p>`}</div>
   <form class="row" id="tAdd" novalidate style="margin-top:10px"><label style="flex:1 1 200px">${LG('Übung hinzufügen','Add exercise')}<input id="tEx" list="exnames" autocomplete="off" placeholder="${LG('Übung suchen oder neue eingeben','Search exercise or enter a new one')}"></label><button class="pri" style="width:auto">${LG('Hinzufügen','Add')}</button></form>
@@ -1580,11 +1581,12 @@ function chatNotify(o){const k=keyOf(o),m=LS.get('tb-chatread',{}),rk=rdKey(k),l
   updBadge()}
 function sendMsg(k,x){if(!FB||!ME)return Promise.resolve();return msgsRef(k).add({from:ME.uid,name:curNameAcc(),t:x.t||'',ts:Date.now(),...(x.plan?{plan:x.plan}:{}),...(x.wk?{wk:x.wk}:{})}).catch(cloudErr)}
 function planPayload(t){const c=cleanTpl(t);return{name:c.name,ex:c.ex}}
-function wkPayload(w){return{title:w.title||'',date:w.date,v:Math.round(vol(w)||0),ex:w.ex.slice(0,30).map(e=>({n:e.n,u:e.u||'kg',s:e.s.slice(0,20).map(s=>[+s[0]||0,+s[1]||0])}))}}
+function prePayload(pid,d){const p=PLANS.find(x=>x.id===pid),day=p&&p.w[d];if(!day)return null;return{name:LG(...p.n)+' – '+LG(...day.n),ex:pDay(day,{...PDEF,days:pDefDays(p)}).map(x=>({n:x.n,s:x.sets}))}}
+function wkPayload(w){return{title:w.title||'',date:w.date,v:Math.round(vol(w)||0),ex:w.ex.slice(0,30).map(e=>({n:e.n,u:e.u||'kg',s:e.s.slice(0,20).map(s=>({r:+s[0]||0,w:+s[1]||0}))}))}}
 const tStr=ts=>{const d=new Date(ts),td=new Date().toDateString()===d.toDateString();return d.toLocaleString(I18N.loc,td?{hour:'2-digit',minute:'2-digit'}:{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};
 function msgHTML(m,o){const me=m.from===ME?.uid,sel=S.msel===m.id;let body;
   if(m.plan&&Array.isArray(m.plan.ex)){const p=m.plan;body=`<b>📋 ${esc(String(p.name||''))}</b><span class="pl">${p.ex.slice(0,30).map(e=>esc(I18N.t(String(e.n)))+' ('+(+e.s||2)+')').join(', ')}</span>${me?'':`<button type="button" data-c="take" data-m="${esc(m.id)}">${LG('Plan übernehmen','Save plan')}</button>`}`}
-  else if(m.wk&&Array.isArray(m.wk.ex)){const w=m.wk;body=`<b>🏋️ ${esc(String(w.title||dDE(w.date,{weekday:'long'})))}</b><span class="pl">${esc(dDE(w.date))}${w.v?' · '+fmtVol(w.v)+' '+LG('bewegt','lifted'):''}</span><span class="pl">${w.ex.map(e=>`${esc(I18N.t(String(e.n)))}: ${esc(setsText((e.s||[]).map(s=>[+s[0]||0,+s[1]||0]),e.u==='lbs'?'lbs':'kg'))}`).join('<br>')}</span>`}
+  else if(m.wk&&Array.isArray(m.wk.ex)){const w=m.wk;body=`<b>🏋️ ${esc(String(w.title||dDE(w.date,{weekday:'long'})))}</b><span class="pl">${esc(dDE(w.date))}${w.v?' · '+fmtVol(w.v)+' '+LG('bewegt','lifted'):''}</span><span class="pl">${w.ex.map(e=>`${esc(I18N.t(String(e.n)))}: ${esc(setsText((e.s||[]).map(s=>Array.isArray(s)?[+s[0]||0,+s[1]||0]:[+s?.r||0,+s?.w||0]),e.u==='lbs'?'lbs':'kg'))}`).join('<br>')}</span>`}
   else body=esc(m.t);
   const rx=m.rx&&typeof m.rx==='object'?Object.values(m.rx).filter(e=>MRX.includes(e)):[],rc={};rx.forEach(e=>rc[e]=(rc[e]||0)+1);
   return `<div class="msg${me?' me':''}">${o.gid&&!me?`<span class="mname">${esc(m.name||'?')}</span>`:''}<div class="bub" data-c="msel" data-m="${esc(m.id)}">${body}<small>${tStr(m.ts)}</small></div>
@@ -1605,6 +1607,7 @@ function renderPick(){const el=$('cPick');if(!el)return;const l=myTpl(),ws=myWor
   el.innerHTML=`<div class="lhead" style="margin:0 0 6px"><b>${LG('Was möchtest du teilen?','What do you want to share?')}</b><button type="button" class="ghost" data-c="pick" style="width:auto">${LG('Schließen','Close')}</button></div>
     <p class="prev" style="margin:6px 0 0">${LG('Meine Pläne','My plans')}</p>`+(l.length?l.map(t=>`<button type="button" class="plcard" data-c="sendplan" data-t="${esc(t.id)}" style="margin-top:6px"><b style="font-size:16px">📋 ${esc(t.name)}</b><small>${t.ex.map(e=>esc(I18N.t(e.n))).join(' · ')}</small></button>`).join('')
     :`<p class="status" style="margin:4px 0 0">${LG('Noch keine eigenen Pläne – erstelle einen unter Training → Trainingspläne.','No plans yet – create one under Workout → Training plans.')}</p>`)
+    +`<p class="prev" style="margin:12px 0 0">${LG('Fertige Trainingspläne','Ready-made plans')}</p>`+PLANS.map(p=>p.w.map((d,i)=>`<button type="button" class="plcard" data-c="sendpre" data-p="${p.id}" data-d="${i}" style="margin-top:6px"><b style="font-size:16px">📋 ${esc(LG(...p.n))} – ${esc(LG(...d.n))}</b><small>${d.ex.map(([n])=>esc(I18N.t(n))).join(' · ')}</small></button>`).join('')).join('')
     +`<p class="prev" style="margin:12px 0 0">${LG('Letzte Trainings','Recent workouts')}</p>`+(ws.length?ws.map(w=>`<button type="button" class="plcard" data-c="sendwk" data-w="${esc(w.id)}" style="margin-top:6px"><b style="font-size:16px">🏋️ ${esc(w.title||dDE(w.date,{weekday:'long'}))} · ${esc(dDE(w.date))}</b><small>${w.ex.map(e=>esc(I18N.t(e.n))).join(' · ')}</small></button>`).join('')
     :`<p class="status" style="margin:4px 0 0">${LG('Noch keine Trainings.','No workouts yet.')}</p>`)}
 function openChat(k){S.chat=k;renderChat();const i=$('cIn');if(i&&matchMedia('(pointer:fine)').matches)i.focus()}
@@ -1638,6 +1641,7 @@ $('chat').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!
   else if(a==='gmem')showMembers();
   else if(a==='pick'){const p=$('cPick');p.hidden=!p.hidden;if(!p.hidden)renderPick()}
   else if(a==='sendplan'){const t=myTpl().find(x=>x.id===b.dataset.t);if(t&&o){sendMsg(k,{plan:planPayload(t)});$('cPick').hidden=true}}
+  else if(a==='sendpre'){const pl=prePayload(b.dataset.p,+b.dataset.d);if(pl&&o){sendMsg(k,{plan:pl});$('cPick').hidden=true}}
   else if(a==='sendwk'){const w=myWorkouts().find(x=>x.id===b.dataset.w);if(w&&o){sendMsg(k,{wk:wkPayload(w)});$('cPick').hidden=true}}
   else if(a==='msel'){S.msel=S.msel===b.dataset.m?null:b.dataset.m;$('cMsgs')._h=null;renderChat()}
   else if(a==='mrx'){if(!m)return;const rx={...(m.rx&&typeof m.rx==='object'?m.rx:{})};if(rx[ME.uid]===b.dataset.e)delete rx[ME.uid];else rx[ME.uid]=b.dataset.e;m.rx=rx;S.msel=null;msgsRef(k).doc(m.id).update({rx}).catch(cloudErr);renderChat()}
@@ -1658,7 +1662,9 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-g]');if(!b
   else if(a==='leave'){const g=chatObj(S.chat);if(!g?.gid||!arm(b,LG('Wirklich verlassen?','Really leave?')))return;hideModal();
     (g.members.length<=1?gref(g.gid).delete():gref(g.gid).update({members:g.members.filter(x=>x!==ME.uid)})).catch(cloudErr);
     F.groups.delete(g.gid);const sk='gm|'+g.gid;if(subs[sk]){try{subs[sk]()}catch{}delete subs[sk]}closeChat();toast(LG(`Du hast „${g.name}“ verlassen`,`You left “${g.name}”`))}
+  else if(a==='sendpl'){const pl=S.sharePl;if(!pl)return;sendMsg(b.dataset.k,{plan:pl});hideModal();toast(LG('Plan geteilt','Plan shared'))}
   else if(a==='sendwk'){const w=S.shareW;if(!w)return;sendMsg(b.dataset.k,{wk:wkPayload(w)});hideModal();toast(LG('Training geteilt','Workout shared'))}});
+function sharePlanTo(pl){S.sharePl=pl;showModal(LG('Plan teilen','Share plan'),`<p class="prev" style="margin:0 0 8px">„${esc(pl.name)}“ – ${LG('in welchen Chat?','which chat?')}</p>`+allChats().map(o=>`<button type="button" class="plcard" data-g="sendpl" data-k="${esc(keyOf(o))}"><b style="font-size:17px">${o.gid?'👥 ':''}${esc(o.name)}</b><small>${o.gid?esc(gMembers(o)):'@'+esc(o.uname)}</small></button>`).join(''))}
 function shareWorkout(w){S.shareW=w;showModal(LG('Training teilen','Share workout'),`<p class="prev" style="margin:0 0 8px">${LG('In welchen Chat?','Which chat?')}</p>`+allChats().map(o=>`<button type="button" class="plcard" data-g="sendwk" data-k="${esc(keyOf(o))}"><b style="font-size:17px">${o.gid?'👥 ':''}${esc(o.name)}</b><small>${o.gid?esc(gMembers(o)):'@'+esc(o.uname)}</small></button>`).join(''))}
 
 /* ---------- Lieblingsübungen ---------- */
@@ -1786,7 +1792,7 @@ function renderSettings(){
     </div>
     <div class="seth" style="margin:16px 0 6px">Design</div><div class="seg" id="thSeg">${[['auto','Automatisch'],['light','Hell'],['dark','Dunkel']].map(([k,l])=>`<button type="button" data-th="${k}" aria-pressed="${SET.theme===k}">${l}</button>`).join('')}</div>
     <div class="seth" style="margin:16px 0 6px">Sprache</div>${I18N.sw()}
-    <p class="status" style="margin:14px 0 0;text-align:center">Dein Trainingsbuch · Version 13 · 20.11.2026</p>`;
+    <p class="status" style="margin:14px 0 0;text-align:center">Dein Trainingsbuch · Version 14 · 21.11.2026</p>`;
 }
 $('sBody').addEventListener('change',e=>{const k=e.target.dataset.s;if(!k)return;SET[k]=e.target.checked;saveSet();if(k==='rt'&&!SET.rt)stopRest();renderSettings();if(draft)renderEditor()});
 $('sBody').addEventListener('click',e=>{const t=e.target.closest('[data-th]');if(t){SET.theme=t.dataset.th;saveSet();applyTheme();renderSettings();return}const b=e.target.closest('[data-rest]');if(!b)return;SET.rest=+b.dataset.rest;saveSet();renderSettings()});
