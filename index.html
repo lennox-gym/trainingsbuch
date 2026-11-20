@@ -221,6 +221,12 @@ body.ro #newW,body.ro #bform,body.ro #blist .x{display:none!important}
 .lang.gl{position:absolute;top:max(env(safe-area-inset-top),10px);right:max(3vw,10px);z-index:2}
 .lang.gl button{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff}
 .lang.gl button[aria-pressed=true]{border-color:#fff;background:rgba(255,255,255,.2)}
+.plcard{display:block!important;width:100%;text-align:left;padding:14px 16px!important;margin-top:10px;border-radius:14px!important;min-height:0;line-height:1.3}
+.plcard b{display:block;font-size:19px}.plcard small{display:block;color:var(--mute);font-weight:500;font-size:14px;margin-top:4px;line-height:1.4}
+.plcard.best{border-color:var(--red);box-shadow:inset 0 0 0 1px var(--red)}
+.pbadge{display:inline-block;background:var(--red);color:#fff;font-size:12px;font-weight:700;border-radius:99px;padding:1px 8px;margin-right:8px;vertical-align:middle}
+.pbar{height:6px;background:var(--line);border-radius:9px;overflow:hidden}.pbar i{display:block;height:100%;background:var(--red);border-radius:9px}
+.plx{list-style:none;margin:0;padding:0}.plx li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid var(--line)}.plx li:first-child{border-top:0}.plx li span:last-child{color:var(--mute);white-space:nowrap;font-variant-numeric:tabular-nums}
 </style><script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script></head>
 <body>
 <div class="gate" id="gate" hidden><div class="gwrap">
@@ -228,7 +234,7 @@ body.ro #newW,body.ro #bform,body.ro #blist .x{display:none!important}
   <div><h1>Dein Trainingsbuch</h1><p class="gsub">Trainings, Fortschritt und Freunde</p></div></div>
   <div class="gcard" id="gcard"></div>
   <button type="button" class="glocal" id="gLocalBtn">Ohne Konto nutzen</button>
-  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 7 · 20.11.2026</p>
+  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 8 · 20.11.2026</p>
 </div></div>
 <header class="top band"><div class="wrap">
   <div class="toprow"><h1>Dein Trainingsbuch</h1><div class="tbtns"><button class="ibtn" id="sBtn" aria-label="Einstellungen" aria-expanded="false" aria-controls="spanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="pchip" id="pBtn" aria-expanded="false" aria-controls="ppanel"><span class="av" id="pAv">I</span><span id="pName">Ich</span></button></div></div>
@@ -430,7 +436,7 @@ const D={
 'Kniebeuge':'Squat','Frontkniebeuge':'Front squat','Beinpresse':'Leg press','Ausfallschritte':'Lunges','Beinstrecker':'Leg extension','Beinbeuger':'Leg curl',
 'Rumänisches Kreuzheben':'Romanian deadlift','Kreuzheben':'Deadlift','Wadenheben':'Calf raises','Klimmzüge':'Pull-ups','Latzug':'Lat pulldown',
 'Langhantelrudern':'Barbell row','Kurzhantelrudern':'Dumbbell row','Kabelrudern':'Cable row','Schulterdrücken':'Shoulder press','Seitheben':'Lateral raises',
-'Bizepscurls':'Biceps curls','Hammercurls':'Hammer curls','Trizepsdrücken am Kabel':'Cable triceps pushdown','French Press':'Skull crushers',
+'Bizepscurls':'Biceps curls','Hammercurls':'Hammer curls','Trizepsdrücken am Kabel':'Cable triceps pushdown','French Press':'Skull crushers','Reverse Butterfly':'Reverse fly','Beinheben':'Leg raises','Trainingspläne':'Training plans',
 'Montag':'Monday','Dienstag':'Tuesday','Mittwoch':'Wednesday','Donnerstag':'Thursday','Freitag':'Friday','Samstag':'Saturday','Sonntag':'Sunday',
 'z. B. Max':'e.g. Max','z. B. lisa':'e.g. lisa','z. B. max.muster':'e.g. max.smith','Name, z. B. Lisa':'Name, e.g. Lisa','z. B. 82,4':'e.g. 82.4','z. B. 78':'e.g. 78','z. B. 60':'e.g. 60',
 'z. B. Push, Beine, Ganzkörper':'e.g. Push, Legs, Full body','z. B. Sitz Stufe 4, enger Griff, Schulter zwickt':'e.g. seat level 4, close grip, shoulder twinges'
@@ -501,7 +507,7 @@ return{lang:L,loc:LOC,t,sw};
 
 <script>
 {
-const PG={'Bankdrücken':'Brust','Schrägbankdrücken':'Brust','Kurzhantel-Bankdrücken':'Brust','Butterfly':'Brust','Dips':'Brust','Liegestütze':'Brust','Kniebeuge':'Beine','Frontkniebeuge':'Beine','Beinpresse':'Beine','Ausfallschritte':'Beine','Beinstrecker':'Beine','Beinbeuger':'Beine','Rumänisches Kreuzheben':'Po','Kreuzheben':'Rücken','Hip Thrust':'Po','Wadenheben':'Waden','Klimmzüge':'Rücken','Latzug':'Rücken','Langhantelrudern':'Rücken','Kurzhantelrudern':'Rücken','Kabelrudern':'Rücken','Face Pulls':'Schultern','Schulterdrücken':'Schultern','Seitheben':'Schultern','Bizepscurls':'Bizeps','Hammercurls':'Bizeps','Trizepsdrücken am Kabel':'Trizeps','French Press':'Trizeps','Plank':'Bauch','Crunches':'Bauch'};
+const PG={'Bankdrücken':'Brust','Schrägbankdrücken':'Brust','Kurzhantel-Bankdrücken':'Brust','Butterfly':'Brust','Dips':'Brust','Liegestütze':'Brust','Kniebeuge':'Beine','Frontkniebeuge':'Beine','Beinpresse':'Beine','Ausfallschritte':'Beine','Beinstrecker':'Beine','Beinbeuger':'Beine','Rumänisches Kreuzheben':'Po','Kreuzheben':'Rücken','Hip Thrust':'Po','Wadenheben':'Waden','Klimmzüge':'Rücken','Latzug':'Rücken','Langhantelrudern':'Rücken','Kurzhantelrudern':'Rücken','Kabelrudern':'Rücken','Face Pulls':'Schultern','Schulterdrücken':'Schultern','Seitheben':'Schultern','Bizepscurls':'Bizeps','Hammercurls':'Bizeps','Trizepsdrücken am Kabel':'Trizeps','French Press':'Trizeps','Plank':'Bauch','Crunches':'Bauch','Reverse Butterfly':'Schultern','Beinheben':'Bauch'};
 const PRESET=Object.keys(PG);
 const GROUPS=['Brust','Rücken','Schultern','Bizeps','Trizeps','Beine','Po','Waden','Bauch','Sonstiges'];
 const S={ro:false,remote:null,sel:null,workouts:[],weights:[],meta:{custom:[],goal:null,groups:{}},view:'training',pex:null,metric:'top',r1:'all',r2:'all',prs:new Map(),justSaved:null,cal:null};
@@ -637,10 +643,129 @@ function detailHTML(w){
   return `<p class="status" style="margin:0 0 4px">Training von ${esc(rm?.name||'')}</p><h2>${esc(w.title||dDE(w.date,{weekday:'long'}))}</h2><p class="status">${dDE(w.date,{weekday:'long',day:'numeric',month:'long',year:'numeric'})}${w.dur?' · Dauer '+durTxt(w.dur):''}${v?` · <span class="vol">${fmtVol(v)} bewegt</span>`:''}</p>`
     +(rs?`<div class="prbox"><h3>${rs.length===1?'Neuer Rekord':rs.length+' neue Rekorde'}</h3>${prList(rs)}</div>`:'')
     +w.ex.map(e=>`<div class="ex"><h3>${esc(e.n)}<span class="tag">${esc(groupOf(e.n))}</span></h3><p style="margin:6px 0 0">${esc(setsText(e.s,e.u||'kg'))}</p>${e.note?`<p class="prev" style="margin:4px 0 0">Notiz: ${esc(e.note)}</p>`:''}</div>`).join('')}
+/* ---------- Trainingspläne ---------- */
+const LG=(de,en)=>I18N.lang==='de'?de:en;
+const PD=(n,k,ex)=>({n,k,ex:ex.map(x=>x.split(':'))});
+const PLANS=[
+ {id:'fb',n:['Ganzkörper','Full body'],dd:['2–3 Tage/Woche','2–3 days/week'],lv:['Einsteiger & alle','Beginners & everyone'],
+  d:['Jedes Training trainiert den ganzen Körper. Jede Muskelgruppe kommt 2–3× pro Woche dran – ideal für Einsteiger und wenn du wenig Zeit hast.','Every workout trains the whole body. Each muscle group is trained 2–3× a week – ideal for beginners and busy weeks.'],
+  w:[PD(['Ganzkörper A','Full body A'],'full',['Kniebeuge:c','Bankdrücken:c','Langhantelrudern:c','Schulterdrücken:c','Bizepscurls:i','Trizepsdrücken am Kabel:i','Plank:i']),
+     PD(['Ganzkörper B','Full body B'],'full',['Rumänisches Kreuzheben:c','Schrägbankdrücken:c','Latzug:c','Ausfallschritte:c','Seitheben:i','Beinbeuger:i','Crunches:i'])]},
+ {id:'ul',n:['Upper / Lower','Upper / Lower'],dd:['4 Tage/Woche','4 days/week'],lv:['Ab ein paar Monaten Training','After a few months of training'],
+  d:['Abwechselnd Oberkörper und Unterkörper. Jede Muskelgruppe wird 2× pro Woche trainiert, mit genug Zeit für schwere Grundübungen.','Alternate upper body and lower body. Every muscle group is trained twice a week, with plenty of room for heavy compound lifts.'],
+  w:[PD(['Oberkörper A','Upper A'],'upper',['Bankdrücken:c','Langhantelrudern:c','Schulterdrücken:c','Latzug:c','Bizepscurls:i','Trizepsdrücken am Kabel:i']),
+     PD(['Unterkörper A','Lower A'],'lower',['Kniebeuge:c','Rumänisches Kreuzheben:c','Beinpresse:c','Beinbeuger:i','Wadenheben:i','Plank:i']),
+     PD(['Oberkörper B','Upper B'],'upper',['Schrägbankdrücken:c','Klimmzüge:c','Kurzhantelrudern:c','Seitheben:i','Hammercurls:i','French Press:i']),
+     PD(['Unterkörper B','Lower B'],'lower',['Kreuzheben:c','Ausfallschritte:c','Hip Thrust:c','Beinstrecker:i','Wadenheben:i','Beinheben:i'])]},
+ {id:'ppl',n:['Push / Pull / Legs','Push / Pull / Legs'],dd:['3 oder 6 Tage/Woche','3 or 6 days/week'],lv:['Fortgeschrittene','Intermediate'],
+  d:['Drücken (Brust, Schultern, Trizeps), Ziehen (Rücken, Bizeps) und Beine an getrennten Tagen. Mit 6 Tagen kommt jede Muskelgruppe 2× pro Woche dran.','Pushing (chest, shoulders, triceps), pulling (back, biceps) and legs on separate days. With 6 days each muscle group is trained twice a week.'],
+  w:[PD(['Push','Push'],'push',['Bankdrücken:c','Schulterdrücken:c','Schrägbankdrücken:c','Seitheben:i','Trizepsdrücken am Kabel:i','French Press:i']),
+     PD(['Pull','Pull'],'pull',['Klimmzüge:c','Langhantelrudern:c','Latzug:c','Face Pulls:i','Bizepscurls:i','Hammercurls:i']),
+     PD(['Legs','Legs'],'legs',['Kniebeuge:c','Rumänisches Kreuzheben:c','Beinpresse:c','Beinbeuger:i','Beinstrecker:i','Wadenheben:i'])]},
+ {id:'bro',n:['Bro-Split','Bro split'],dd:['5 Tage/Woche','5 days/week'],lv:['Erfahrene','Advanced'],
+  d:['Jede Muskelgruppe bekommt ihren eigenen Tag: Brust, Rücken, Schultern, Arme, Beine. Viel Volumen pro Einheit, dafür jede Muskelgruppe nur 1× pro Woche.','Each muscle group gets its own day: chest, back, shoulders, arms, legs. Lots of volume per session, but each muscle group only once a week.'],
+  w:[PD(['Brust','Chest'],'chest',['Bankdrücken:c','Schrägbankdrücken:c','Kurzhantel-Bankdrücken:c','Dips:c','Butterfly:i']),
+     PD(['Rücken','Back'],'back',['Kreuzheben:c','Klimmzüge:c','Langhantelrudern:c','Latzug:c','Kabelrudern:i']),
+     PD(['Schultern','Shoulders'],'sh',['Schulterdrücken:c','Seitheben:i','Face Pulls:i','Reverse Butterfly:i','Beinheben:i']),
+     PD(['Arme','Arms'],'arms',['Bizepscurls:i','French Press:i','Hammercurls:i','Trizepsdrücken am Kabel:i','Crunches:i']),
+     PD(['Beine','Legs'],'legs',['Kniebeuge:c','Beinpresse:c','Rumänisches Kreuzheben:c','Beinstrecker:i','Beinbeuger:i','Wadenheben:i'])]},
+ {id:'arn',n:['Arnold-Split','Arnold split'],dd:['3 oder 6 Tage/Woche','3 or 6 days/week'],lv:['Fortgeschrittene & Erfahrene','Intermediate & advanced'],
+  d:['Brust & Rücken, Schultern & Arme, Beine – so hat Arnold Schwarzenegger trainiert. Viel Volumen für den Oberkörper, die Einheiten sind eher lang.','Chest & back, shoulders & arms, legs – the way Arnold Schwarzenegger trained. Lots of upper-body volume; sessions are on the long side.'],
+  w:[PD(['Brust & Rücken','Chest & back'],'cb',['Bankdrücken:c','Klimmzüge:c','Schrägbankdrücken:c','Langhantelrudern:c','Butterfly:i','Latzug:c']),
+     PD(['Schultern & Arme','Shoulders & arms'],'sa',['Schulterdrücken:c','Seitheben:i','Reverse Butterfly:i','Bizepscurls:i','French Press:i','Hammercurls:i','Trizepsdrücken am Kabel:i']),
+     PD(['Beine','Legs'],'legs',['Kniebeuge:c','Rumänisches Kreuzheben:c','Beinpresse:c','Beinstrecker:i','Beinbeuger:i','Wadenheben:i','Crunches:i'])]}
+];
+const PQ=[
+ {k:'goal',q:['Was ist dein Ziel?','What is your goal?'],o:[['hyp','Muskelaufbau','Build muscle'],['str','Kraft','Get stronger'],['fit','Fitter werden & abnehmen','Get fitter & lose fat'],['gen','Gesund & aktiv bleiben','Stay healthy & active']]},
+ {k:'exp',q:['Wie lange trainierst du schon?','How long have you been training?'],o:[[0,'Anfänger (unter 1 Jahr)','Beginner (under 1 year)'],[1,'Fortgeschritten (1–3 Jahre)','Intermediate (1–3 years)'],[2,'Erfahren (über 3 Jahre)','Advanced (over 3 years)']]},
+ {k:'days',q:['Wie oft willst du pro Woche trainieren?','How often do you want to train per week?'],o:[2,3,4,5,6].map(d=>[d,d+' Tage',d+' days'])},
+ {k:'time',q:['Wie viel Zeit hast du pro Training?','How much time do you have per workout?'],o:[[45,'Bis 45 Minuten','Up to 45 minutes'],[60,'Etwa 60 Minuten','About 60 minutes'],[75,'Etwa 75 Minuten','About 75 minutes'],[90,'90 Minuten oder mehr','90 minutes or more']]},
+ {k:'focus',q:['Worauf willst du dich konzentrieren?','What do you want to focus on?'],o:[['bal','Ausgewogen – alles gleich','Balanced – everything equally'],['upper','Oberkörper','Upper body'],['legs','Beine & Po','Legs & glutes'],['arms','Arme','Arms']]}
+];
+const PDEF={goal:'hyp',exp:1,days:null,time:90,focus:'bal'};
+function prx(t,a){const g=a.goal;const reps={str:['4–6','8–10'],hyp:['6–10','10–15'],fit:['10–15','12–20'],gen:['8–12','12–15']}[g][t==='c'?0:1];
+  let sets={str:[4,3],hyp:[3,3],fit:[3,2],gen:[3,2]}[g][t==='c'?0:1];if(a.exp===2&&t==='c'&&g!=='gen')sets++;if(a.exp===0)sets=Math.min(sets,3);return{sets,reps}}
+function pDay(day,a){let ex=day.ex.map(([n,t])=>({n,t}));const has=n=>ex.some(x=>x.n===n),ins=(n,t,i)=>{if(!has(n))ex.splice(Math.min(i,ex.length),0,{n,t})};
+  if(a.focus==='legs'&&/full|lower|legs/.test(day.k))ins('Hip Thrust','c',2);
+  if(a.focus==='arms'){if(/full|upper|pull|cb/.test(day.k))ins('Bizepscurls','i',3);if(/full|upper|push|cb/.test(day.k))ins('Trizepsdrücken am Kabel','i',3)}
+  if(a.focus==='upper'&&/full/.test(day.k))ins('Seitheben','i',4);
+  const max={45:4,60:5,75:6,90:99}[a.time]||99;
+  return ex.slice(0,max).map(x=>({...x,...prx(x.t,a)}))}
+function pScore(p,a){const D=a.days;let s={fb:{2:10,3:9,4:5,5:2,6:1},ul:{2:6,3:5,4:10,5:6,6:5},ppl:{2:1,3:8,4:6,5:7,6:10},bro:{2:0,3:2,4:4,5:10,6:7},arn:{2:0,3:8,4:5,5:6,6:9}}[p.id][D];
+  const add=(o)=>{s+=o[p.id]||0};
+  add([{fb:3,ul:1,bro:-3,arn:-2},{},{fb:-1,bro:1,arn:1}][a.exp]);
+  add({str:{fb:1,ul:2,bro:-2,arn:-1},hyp:{ul:1,ppl:1,bro:1,arn:1},fit:{fb:2,ul:1,bro:-1},gen:{fb:3,ul:1,bro:-2,arn:-2}}[a.goal]);
+  add({45:{ppl:1,bro:1,arn:-2},60:{},75:{},90:{arn:1}}[a.time]);
+  add({bal:{fb:1,ul:1,ppl:1},upper:{arn:2,bro:1},legs:{ul:2,ppl:1,bro:-1},arms:{arn:2,bro:2}}[a.focus]);return s}
+function pWhy(p,a){const r=[],D=a.days,b={fb:{2:10,3:9,4:5,5:2,6:1},ul:{2:6,3:5,4:10,5:6,6:5},ppl:{2:1,3:8,4:6,5:7,6:10},bro:{2:0,3:2,4:4,5:10,6:7},arn:{2:0,3:8,4:5,5:6,6:9}}[p.id][D];
+  r.push(b>=8?LG(`Passt genau zu ${D} Trainingstagen pro Woche.`,`A perfect fit for ${D} training days a week.`):b>=5?LG(`Lässt sich gut auf ${D} Tage verteilen.`,`Works well spread over ${D} days.`):LG(`Mit ${D} Tagen eher ein Kompromiss.`,`More of a compromise with ${D} days.`));
+  const X={fb:[[a.exp===0,'Einfacher Einstieg: wenige Übungen, die du schnell lernst.','Easy start: a few exercises you’ll learn quickly.'],[a.goal==='fit'||a.goal==='gen','Viele Muskeln in jedem Training – gut für Fitness und Kalorienverbrauch.','Lots of muscles in every workout – great for fitness and burning calories.'],[a.goal==='str','Grundübungen oft wiederholen – so lernst du sie schnell schwer zu bewegen.','Practising the big lifts often helps you get strong fast.']],
+    ul:[[a.goal==='str','Viel Zeit für schwere Grundübungen – gut für Kraft.','Plenty of time for heavy compound lifts – great for strength.'],[a.focus==='legs','Zwei eigene Beintage pro Woche.','Two dedicated leg days a week.'],[a.goal==='hyp','Jede Muskelgruppe 2× pro Woche – gut für Muskelaufbau.','Every muscle group twice a week – great for building muscle.']],
+    ppl:[[a.goal==='hyp','Viel Volumen pro Muskelgruppe – gut für Muskelaufbau.','Lots of volume per muscle group – great for building muscle.'],[a.time===45,'Kurze, fokussierte Einheiten.','Short, focused sessions.'],[D===6,'Mit 6 Tagen jede Muskelgruppe 2× pro Woche.','With 6 days every muscle group twice a week.']],
+    bro:[[a.goal==='hyp','Jede Muskelgruppe bekommt einen eigenen Tag mit viel Volumen.','Each muscle group gets its own day with lots of volume.'],[a.focus==='arms'||a.focus==='upper','Eigene Tage für Schultern und Arme.','Dedicated days for shoulders and arms.'],[a.time===45,'Kurze Einheiten, weil pro Tag nur eine Muskelgruppe dran ist.','Short sessions, since each day covers only one muscle group.']],
+    arn:[[a.focus==='upper'||a.focus==='arms','Extra Volumen für Oberkörper und Arme.','Extra volume for upper body and arms.'],[a.goal==='hyp','Klassischer Bodybuilding-Split für Muskelaufbau.','A classic bodybuilding split for building muscle.'],[a.time>=75,'Du hast genug Zeit für die längeren Einheiten.','You have enough time for the longer sessions.']]}[p.id];
+  X.forEach(([c,de,en])=>{if(c)r.push(LG(de,en))});
+  if(a.exp===0&&(p.id==='bro'||p.id==='arn'))r.push(LG('Für Einsteiger eher anspruchsvoll.','Quite demanding for beginners.'));
+  return r.slice(0,3)}
+const WD=()=>LG(['Mo','Di','Mi','Do','Fr','Sa','So'],['Mon','Tue','Wed','Thu','Fri','Sat','Sun']);
+function pSched(p,D){const slots={2:[0,3],3:[0,2,4],4:[0,1,3,4],5:[0,1,2,4,5],6:[0,1,2,3,4,5]}[D];
+  return slots.map((d,i)=>`<b>${WD()[d]}</b> ${esc(LG(...p.w[i%p.w.length].n))}`).join(' · ')+(D%p.w.length&&D>1?`<br><small>${LG('Die Reihenfolge läuft in der nächsten Woche einfach weiter.','The order simply continues next week.')}</small>`:'')}
+function pDefDays(p){return{fb:3,ul:4,ppl:6,bro:5,arn:6}[p.id]}
+function pDayHTML(p,i,a){const day=p.w[i],ex=pDay(day,a),gs=[...new Set(ex.map(x=>groupOf(x.n)))].filter(g=>g!=='Sonstiges').map(g=>I18N.t(g));
+  return `<div class="ex pday"><div class="lhead" style="margin:0"><h3>${esc(LG(...day.n))}</h3></div><p class="prev" style="margin:2px 0 8px">${esc(gs.join(' · '))}</p>
+    <ul class="plx">${ex.map(x=>`<li><span>${esc(I18N.t(x.n))}</span><span>${x.sets} × ${x.reps}</span></li>`).join('')}</ul>
+    <button class="pri" data-pa="go" data-p="${p.id}" data-d="${i}" style="margin-top:10px;width:auto">${LG('Dieses Training starten','Start this workout')}</button></div>`}
+function renderPlans(el){
+  const st=S.plan,head=(t,back)=>`<div class="lhead"><h2>${t}</h2><button class="ghost" data-pa="${back?'back':'close'}">${back?LG('Zurück','Back'):LG('Schließen','Close')}</button></div>`;
+  let h='';
+  if(st.step==='start'){
+    h=head(LG('Trainingspläne','Training plans'))+`<p class="status">${LG('Lass dir einen Plan vorschlagen oder such dir selbst einen aus.','Get a plan suggested or pick one yourself.')}</p>
+      <button class="plcard best" data-pa="quiz"><b>${LG('Fragebogen ausfüllen','Take the questionnaire')}</b><small>${LG('5 kurze Fragen – danach bekommst du passende Pläne vorgeschlagen.','5 quick questions – then you get matching plans.')}</small></button>
+      <button class="plcard" data-pa="list"><b>${LG('Alle Pläne ansehen','Browse all plans')}</b><small>Ganzkörper · Upper/Lower · Push/Pull/Legs · Bro-Split · Arnold-Split</small></button>`;
+  }else if(st.step==='quiz'){
+    const q=PQ[st.q];
+    h=head(LG('Fragebogen','Questionnaire'),1)+`<p class="status">${LG(`Frage ${st.q+1} von ${PQ.length}`,`Question ${st.q+1} of ${PQ.length}`)}</p><div class="pbar"><i style="width:${(st.q+1)/PQ.length*100}%"></i></div>
+      <h3 style="margin:16px 0 4px">${q.q[LG(0,1)]}</h3>${q.o.map(([v,de,en])=>`<button class="plcard${st.a[q.k]===v?' best':''}" data-pa="ans" data-v="${v}"><b style="font-size:17px">${LG(de,en)}</b></button>`).join('')}`;
+  }else if(st.step==='result'){
+    const a=st.a,rk=PLANS.map(p=>({p,s:pScore(p,a)})).sort((x,y)=>y.s-x.s).slice(0,3);
+    const tip={hyp:['Steigere von Woche zu Woche Gewicht oder Wiederholungen. Bleib 1–2 Wiederholungen vor dem Muskelversagen.','Add weight or reps week by week. Stop 1–2 reps short of failure.'],
+      str:['Lange Pausen (2–3 Minuten) bei den Grundübungen. Steigere das Gewicht in kleinen Schritten.','Take long rests (2–3 minutes) on compound lifts. Increase the weight in small steps.'],
+      fit:['Kurze Pausen (60–90 Sekunden). Ergänze 2–3× pro Woche Ausdauer, z. B. 20–30 Minuten zügiges Gehen, Rad oder Laufband.','Keep rests short (60–90 seconds). Add cardio 2–3× a week, e.g. 20–30 minutes of brisk walking, cycling or treadmill.'],
+      gen:['Achte auf saubere Technik statt schwerer Gewichte. Ein Tag Pause zwischen den Einheiten tut gut.','Focus on clean technique rather than heavy weights. A rest day between sessions helps.']}[a.goal];
+    h=head(LG('Deine Vorschläge','Your suggestions'),1)+`<p class="status">${LG('Passend zu deinen Antworten:','Based on your answers:')}</p>`
+      +rk.map(({p},i)=>`<button class="plcard${i?'':' best'}" data-pa="plan" data-p="${p.id}"><b>${i?'':`<span class="pbadge">${LG('Beste Wahl','Best match')}</span>`}${esc(LG(...p.n))}</b><small>${pWhy(p,a).map(esc).join(' ')}</small></button>`).join('')
+      +`<div class="prbox"><b>${LG('Tipp','Tip')}:</b> ${LG(...tip)}</div><button class="ghost" data-pa="quiz" style="width:auto">${LG('Fragebogen neu starten','Restart questionnaire')}</button>`;
+  }else if(st.step==='list'){
+    h=head(LG('Alle Pläne','All plans'),1)+PLANS.map(p=>`<button class="plcard" data-pa="plan" data-p="${p.id}"><b>${esc(LG(...p.n))}</b><small>${LG(...p.dd)} · ${LG(...p.lv)}</small><small>${LG(...p.d)}</small></button>`).join('');
+  }else if(st.step==='plan'){
+    const p=PLANS.find(x=>x.id===st.p),a=st.fromQuiz?st.a:{...PDEF,days:pDefDays(p)};
+    h=head(esc(LG(...p.n)),1)+`<p class="status" style="margin-bottom:8px">${LG(...p.dd)} · ${LG(...p.lv)}</p><p style="margin:0 0 10px">${LG(...p.d)}</p>
+      <div class="prbox" style="margin:10px 0"><b>${LG('Wochenplan','Weekly schedule')} (${a.days} ${LG('Tage','days')})</b><br>${pSched(p,a.days)}</div>
+      <p class="status" style="margin:0">${st.fromQuiz?LG('Sätze × Wiederholungen sind an deine Antworten angepasst.','Sets × reps are adjusted to your answers.'):LG('Sätze × Wiederholungen für Muskelaufbau. Im Fragebogen passt sich das an dein Ziel an.','Sets × reps for building muscle. The questionnaire adapts them to your goal.')}</p>`
+      +p.w.map((_,i)=>pDayHTML(p,i,a)).join('');
+  }
+  el.innerHTML=`<div translate="no">${h}</div>`;
+}
+function planStart(p,i){const a=S.plan.fromQuiz?S.plan.a:{...PDEF,days:pDefDays(p)},day=p.w[i];
+  newDraft();draft.title=LG(...day.n);
+  draft.ex=pDay(day,a).map(x=>({n:x.n,u:lastUnit(x.n)||lastUnit()||'kg',note:'',t:x.reps,s:Array.from({length:x.sets},()=>({r:'',w:'',p:''}))}));
+  S.plan=null;storeDraft();renderEditor();renderList();renderSum();$('editor').scrollIntoView({block:'start'});toast(LG(`Training „${draft.title}“ gestartet`,`Workout “${draft.title}” started`))}
+$('editor').addEventListener('click',e=>{const b=e.target.closest('[data-pa]');if(!b||S.ro)return;const a=b.dataset.pa,st=S.plan||(S.plan={step:'start',a:{},hist:[]});
+  const go=(step,extra)=>{st.hist.push({step:st.step,q:st.q,p:st.p,fromQuiz:st.fromQuiz});Object.assign(st,{step},extra||{})};
+  if(a==='open'){S.plan={step:'start',a:{},hist:[]}}
+  else if(a==='close'){S.plan=null}
+  else if(a==='back'){const h=st.hist.pop();if(h)Object.assign(st,h);else S.plan=null}
+  else if(a==='quiz'){go('quiz',{q:0,a:{}})}
+  else if(a==='list'){go('list',{fromQuiz:false})}
+  else if(a==='ans'){const q=PQ[st.q];const raw=b.dataset.v;st.a[q.k]=isNaN(+raw)?raw:+raw;if(st.q<PQ.length-1)go('quiz',{q:st.q+1});else go('result',{fromQuiz:true})}
+  else if(a==='plan'){go('plan',{p:b.dataset.p,fromQuiz:st.step==='result'})}
+  else if(a==='go'){planStart(PLANS.find(x=>x.id===b.dataset.p),+b.dataset.d);return}
+  renderEditor();$('editor').scrollIntoView({block:'start'})});
 function renderEditor(){
   const el=$('editor');
   if(S.ro){const w=(S.sel&&S.workouts.find(x=>x.id===S.sel))||[...S.workouts].sort(byDate).pop();
     el.innerHTML=w?detailHTML(w)+'<p class="status" style="margin:14px 0 0">Tipp in der Liste auf ein Training, um es anzusehen.</p>':'<h2>Noch keine Trainings</h2><p class="status">Sobald hier Trainings eingetragen werden, siehst du sie.</p>';return}
+  if(!draft&&S.plan){renderPlans(el);return}
   if(!draft){
     const last=[...S.workouts].sort(byDate).pop(),js=S.justSaved&&S.workouts.find(w=>w.id===S.justSaved),rs=js&&S.prs.get(js.id);
     el.innerHTML=(js?(rs?`<div class="prbox" style="margin-top:0"><h3>Stark – ${rs.length===1?'neuer Rekord':rs.length+' neue Rekorde'}!</h3>${prList(rs)}</div>`
@@ -648,7 +773,7 @@ function renderEditor(){
       +`<h2>Bereit fürs nächste Training?</h2>
       <p style="color:var(--mute);margin:8px 0 16px">Leg ein Training mit Datum an, wähl deine Übungen aus und trag Sätze mit Wiederholungen und Gewicht ein.</p>
       <div class="row"><button class="pri" data-a="new" style="font-size:18px;padding:12px 22px">+ Training starten</button>
-      ${last?`<button data-a="dup" data-id="${last.id}">Letztes Training wiederholen</button>`:''}</div>`;
+      ${last?`<button data-a="dup" data-id="${last.id}">Letztes Training wiederholen</button>`:''}<button data-pa="open">Trainingspläne</button></div>`;
     return}
   const u=usage().sort((a,b)=>b.last.localeCompare(a.last)||b.c-a.c).slice(0,8).map(x=>x.n).filter(n=>!draft.ex.some(e=>e.n===n));
   const past=[...S.workouts].sort(byDate).reverse().filter(w=>w.id!==draft.id).slice(0,15);
@@ -679,7 +804,7 @@ function exHTML(e,i){
       <button class="x" data-a="up" title="Nach oben" aria-label="Nach oben" ${i?'':'disabled'}>↑</button>
       <button class="x" data-a="rmEx" aria-label="Übung ${esc(e.n)} entfernen">×</button></div></div>
     ${known?'':`<label style="margin:6px 0 8px">Muskelgruppe für diese Übung<select data-f="grp"><option value="">Bitte wählen …</option>${GROUPS.map(g=>`<option value="${g}">${g}</option>`).join('')}</select></label>`}
-    <p class="prev">${p?`Letztes Mal (${dDE(p.date,{day:'2-digit',month:'2-digit'})}): ${esc(setsText(p.sets,u))} – leere Felder übernehmen diese Werte`:'Erstes Mal – viel Erfolg!'}</p>
+    <p class="prev">${e.t?`<b>${LG('Ziel','Target')}: ${esc(e.t)} ${LG('Wdh.','reps')}</b> · `:''}${p?`Letztes Mal (${dDE(p.date,{day:'2-digit',month:'2-digit'})}): ${esc(setsText(p.sets,u))} – leere Felder übernehmen diese Werte`:'Erstes Mal – viel Erfolg!'}</p>
     <div class="sets">
       <div class="set seth"><span>Satz</span><span>Wdh.</span><span>${u}</span><span>✓</span><span></span></div>
       ${e.s.map((s,j)=>`<div class="set${s.d?' done':''}" data-j="${j}"><span class="n">${j+1}</span>
@@ -1374,7 +1499,7 @@ function renderSettings(){
       <label class="sw" style="margin-top:10px"><span><b>Ton & Vibration</b><small>Signal, wenn die Pause vorbei ist (Vibration nur auf Android).</small></span><input type="checkbox" role="switch" data-s="snd" ${SET.snd?'checked':''}></label>
     </div>
     <div class="seth" style="margin:16px 0 6px">Sprache</div>${I18N.sw()}
-    <p class="status" style="margin:14px 0 0;text-align:center">Dein Trainingsbuch · Version 7 · 20.11.2026</p>`;
+    <p class="status" style="margin:14px 0 0;text-align:center">Dein Trainingsbuch · Version 8 · 20.11.2026</p>`;
 }
 $('sBody').addEventListener('change',e=>{const k=e.target.dataset.s;if(!k)return;SET[k]=e.target.checked;saveSet();if(k==='rt'&&!SET.rt)stopRest();renderSettings();if(draft)renderEditor()});
 $('sBody').addEventListener('click',e=>{const b=e.target.closest('[data-rest]');if(!b)return;SET.rest=+b.dataset.rest;saveSet();renderSettings()});
