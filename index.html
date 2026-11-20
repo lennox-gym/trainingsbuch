@@ -234,7 +234,7 @@ body.ro #newW,body.ro #bform,body.ro #blist .x{display:none!important}
   <div><h1>Dein Trainingsbuch</h1><p class="gsub">Trainings, Fortschritt und Freunde</p></div></div>
   <div class="gcard" id="gcard"></div>
   <button type="button" class="glocal" id="gLocalBtn">Ohne Konto nutzen</button>
-  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 8 · 20.11.2026</p>
+  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 9 · 20.11.2026</p>
 </div></div>
 <header class="top band"><div class="wrap">
   <div class="toprow"><h1>Dein Trainingsbuch</h1><div class="tbtns"><button class="ibtn" id="sBtn" aria-label="Einstellungen" aria-expanded="false" aria-controls="spanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="pchip" id="pBtn" aria-expanded="false" aria-controls="ppanel"><span class="av" id="pAv">I</span><span id="pName">Ich</span></button></div></div>
@@ -684,7 +684,7 @@ const PQ=[
 ];
 const PDEF={goal:'hyp',exp:1,days:null,time:90,focus:'bal'};
 function prx(t,a){const g=a.goal;const reps={str:['4–6','8–10'],hyp:['6–10','10–15'],fit:['10–15','12–20'],gen:['8–12','12–15']}[g][t==='c'?0:1];
-  let sets={str:[4,3],hyp:[3,3],fit:[3,2],gen:[3,2]}[g][t==='c'?0:1];if(a.exp===2&&t==='c'&&g!=='gen')sets++;if(a.exp===0)sets=Math.min(sets,3);return{sets,reps}}
+  return{sets:2,reps}}
 function pDay(day,a){let ex=day.ex.map(([n,t])=>({n,t}));const has=n=>ex.some(x=>x.n===n),ins=(n,t,i)=>{if(!has(n))ex.splice(Math.min(i,ex.length),0,{n,t})};
   if(a.focus==='legs'&&/full|lower|legs/.test(day.k))ins('Hip Thrust','c',2);
   if(a.focus==='arms'){if(/full|upper|pull|cb/.test(day.k))ins('Bizepscurls','i',3);if(/full|upper|push|cb/.test(day.k))ins('Trizepsdrücken am Kabel','i',3)}
@@ -1499,7 +1499,7 @@ function renderSettings(){
       <label class="sw" style="margin-top:10px"><span><b>Ton & Vibration</b><small>Signal, wenn die Pause vorbei ist (Vibration nur auf Android).</small></span><input type="checkbox" role="switch" data-s="snd" ${SET.snd?'checked':''}></label>
     </div>
     <div class="seth" style="margin:16px 0 6px">Sprache</div>${I18N.sw()}
-    <p class="status" style="margin:14px 0 0;text-align:center">Dein Trainingsbuch · Version 8 · 20.11.2026</p>`;
+    <p class="status" style="margin:14px 0 0;text-align:center">Dein Trainingsbuch · Version 9 · 20.11.2026</p>`;
 }
 $('sBody').addEventListener('change',e=>{const k=e.target.dataset.s;if(!k)return;SET[k]=e.target.checked;saveSet();if(k==='rt'&&!SET.rt)stopRest();renderSettings();if(draft)renderEditor()});
 $('sBody').addEventListener('click',e=>{const b=e.target.closest('[data-rest]');if(!b)return;SET.rest=+b.dataset.rest;saveSet();renderSettings()});
