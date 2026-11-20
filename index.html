@@ -100,7 +100,7 @@ button:disabled{opacity:.35;cursor:default}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:18px 26px;margin:6px 0 18px}
 .stat>span{font-size:14px;color:var(--mute)}
 .stat .num{font-size:clamp(32px,4vw,44px);white-space:nowrap;display:block}
-.stat small{font-size:14px;color:var(--mute);white-space:nowrap}
+.stat small{font-size:14px;color:var(--mute);display:block;overflow-wrap:anywhere}
 .up{color:var(--ok)}.down{color:var(--red)}
 .fig{position:relative;min-height:340px;margin-bottom:22px}.fig>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .fig .none{position:absolute;inset:0;display:grid;place-items:center;color:var(--mute);border:1.5px dashed var(--line);border-radius:14px;text-align:center;padding:20px}
@@ -221,7 +221,7 @@ body.ro #newW,body.ro #bform,body.ro #blist .x{display:none!important}
   <div><h1>Trainingsbuch</h1><p class="gsub">Trainings, Fortschritt und Freunde</p></div></div>
   <div class="gcard" id="gcard"></div>
   <button type="button" class="glocal" id="gLocalBtn">Ohne Konto nutzen</button>
-  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 4 · 20.11.2026</p>
+  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 5 · 20.11.2026</p>
 </div></div>
 <header class="top band"><div class="wrap">
   <div class="toprow"><h1>Trainingsbuch</h1><div class="tbtns"><button class="ibtn" id="sBtn" aria-label="Einstellungen" aria-expanded="false" aria-controls="spanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="pchip" id="pBtn" aria-expanded="false" aria-controls="ppanel"><span class="av" id="pAv">I</span><span id="pName">Ich</span></button></div></div>
@@ -563,7 +563,7 @@ function saveDraft(){
   if(!ex.length){toast('Trag mindestens einen Satz mit Wiederholungen ein');return}
   if(!draft.date){toast('Bitte ein Datum wählen');return}
   const id=draft.id||uid();const w={id,date:draft.date,title:draft.title.trim(),ex,ts:draft.ts||Date.now()};
-  let dur=null;if(draft.id){const m=num(draft.durMin);dur=m!=null&&m>0?Math.round(m*60):null}else if(draft.start){dur=Math.round((Date.now()-draft.start)/1000);if(dur<60||dur>6*3600)dur=null}
+  let dur=null;if(draft.id){const m=num(draft.durMin);dur=m!=null&&m>0?Math.round(m*60):null}else if(draft.start&&SET.wt){dur=Math.round((Date.now()-draft.start)/1000);if(dur<60||dur>6*3600)dur=null}
   if(dur)w.dur=dur;stopRest();
   S.workouts=S.workouts.filter(x=>x.id!==id).concat(w);cloudWorkout(w);
   draft=null;storeDraft();S.justSaved=id;renderAll();
@@ -707,12 +707,13 @@ function draw(fig){
 function bindTip(fig){
   const s=fig.querySelector('svg'),tip=fig.querySelector('.tip');
   const hide=()=>{tip.style.display='none';const h=s.querySelector('.hov');h&&(h.style.display='none')};
-  s.addEventListener('pointermove',e=>{const m=fig._m;if(!m)return;const pts=m.d.series[0].pts;if(!pts.length)return;
+  const mv=e=>{const m=fig._m;if(!m)return;const pts=m.d.series[0].pts;if(!pts.length)return;
     const r=s.getBoundingClientRect(),x=e.clientX-r.left;let best=pts[0],bd=1e9;
     for(const p of pts){const dd=Math.abs(m.X(p[0])-x);if(dd<bd){bd=dd;best=p}}
     const cx=m.X(best[0]),cy=m.Y(best[1]);tip.innerHTML=m.d.tip(best);tip.style.display='block';
     tip.style.left=Math.min(Math.max(cx,90),r.width-90)+'px';tip.style.top=cy+'px';
-    const h=s.querySelector('.hov');h.setAttribute('cx',cx);h.setAttribute('cy',cy);h.style.display=''});
+    const h=s.querySelector('.hov');h.setAttribute('cx',cx);h.setAttribute('cy',cy);h.style.display=''};
+  s.addEventListener('pointermove',mv);s.addEventListener('pointerdown',mv);
   s.addEventListener('pointerleave',hide);
 }
 
@@ -952,7 +953,7 @@ function viewRemote(id,sel){
   storeDraft();S.remote={uid:id};S.ro=true;draft=null;S.justSaved=null;S.sel=sel||null;
   applyRemote(true);renderAll();togglePanel(false);
 }
-const authMsg=e=>({'auth/email-already-in-use':'Diesen Benutzernamen gibt es schon','auth/invalid-credential':'Benutzername oder Passwort falsch','auth/wrong-password':'Benutzername oder Passwort falsch','auth/user-not-found':'Benutzername oder Passwort falsch','auth/invalid-login-credentials':'Benutzername oder Passwort falsch','auth/weak-password':'Passwort zu kurz (mind. 6 Zeichen)','auth/too-many-requests':'Zu viele Versuche – bitte später nochmal','auth/network-request-failed':'Keine Verbindung – bitte Internet prüfen','auth/operation-not-allowed':'Anmeldung ist in Firebase noch nicht aktiviert','permission-denied':'Speichern im Konto nicht erlaubt (fehlende Berechtigung)','unavailable':'Keine Verbindung – bitte Internet prüfen'}[e?.code]||'Fehler: '+(e?.code||e?.message||'unbekannt'));
+const authMsg=e=>({'auth/email-already-in-use':'Diesen Benutzernamen gibt es schon','auth/invalid-credential':'Benutzername oder Passwort falsch','auth/wrong-password':'Benutzername oder Passwort falsch','auth/user-not-found':'Benutzername oder Passwort falsch','auth/invalid-login-credentials':'Benutzername oder Passwort falsch','auth/weak-password':'Passwort zu kurz (mind. 6 Zeichen)','auth/too-many-requests':'Zu viele Versuche – bitte später nochmal','auth/network-request-failed':'Keine Verbindung – bitte Internet prüfen','auth/operation-not-allowed':'Anmeldung ist in Firebase noch nicht aktiviert','permission-denied':'Speichern im Konto nicht erlaubt (fehlende Berechtigung)','name-taken':'Diesen Benutzernamen gibt es schon','auth/requires-recent-login':'Bitte neu anmelden und nochmal versuchen','unavailable':'Keine Verbindung – bitte Internet prüfen'}[e?.code]||'Fehler: '+(e?.code||e?.message||'unbekannt'));
 let busy=false;
 async function doAuth(create){
   if(busy)return;
@@ -978,6 +979,8 @@ async function link(user,isNew){
   const p=curP();LS.set('tb-acc-pid',pid);LS.set('tb-acc-uid',user.uid);p.dirty=false;p.delq=[];
   if(!isNew){
     let data=null;try{const d=await uref(user.uid).get();data=d.exists?d.data():null}catch{}
+    try{const n=await nref(unameOf(user)).get();if(!n.exists)await nref(unameOf(user)).set({uid:user.uid})}catch{}
+    if(data&&!Array.isArray(data.friends))await uref(user.uid).set({friends:[],fmeta:{}},{merge:true}).catch(()=>{});
     if(data){const r=merge({workouts:[],weights:remoteWeights(data.weights),meta:data.meta},{workouts:[],weights:S.weights,meta:S.meta});S.weights=r.d.weights;S.meta=r.d.meta;if(data.name)p.name=String(data.name)}
     else await uref(user.uid).set({...memberBody(p.name,S),uname:unameOf(user),friends:[],fmeta:{}},{merge:true}).catch(()=>{});
   }
@@ -987,13 +990,15 @@ async function link(user,isNew){
   toast(isNew?`Konto „${unameOf(user)}“ erstellt`:`Angemeldet als ${unameOf(user)}`,3000);
 }
 function signOutAcc(){LS.del('tb-mode');LS.del('tb-acc-pid');LS.del('tb-acc-uid');if(FB&&ME)FB.auth.signOut().catch(()=>{});ME=null;stopSync();renderAll();showGate('login')}
-async function deleteAccount(){
+async function deleteAccount(pw){
   const id=ME.uid,u=unameOf(ME);
   try{
+    await ME.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(ME.email,pw));
     const ws=await uref(id).collection('workouts').get(),rq=await uref(id).collection('requests').get();
     await runOps([...ws.docs.map(d=>['del',d.ref]),...rq.docs.map(d=>['del',d.ref]),['del',nref(u)],['del',uref(id)]]);
     await ME.delete();
-  }catch(e){toast(e?.code==='auth/requires-recent-login'?'Bitte ab- und wieder anmelden, dann nochmal löschen':'Löschen fehlgeschlagen ('+(e?.code||'Fehler')+')',4000);return}
+  }catch(e){const x=$('delErr');const m=/invalid|wrong-password/.test(e?.code||'')?'Passwort falsch':authMsg(e);if(x)x.textContent=m;else toast(m,4000);return}
+  S.delAsk=false;
   const lp=P.find(x=>x.uid===id);if(lp)delete lp.uid;LS.set('tb-profiles',P);LS.set('tb-known',known().filter(x=>x!==u));
   LS.del('tb-mode');LS.del('tb-acc-pid');LS.del('tb-acc-uid');ME=null;stopSync();renderAll();showGate('reg');toast('Konto gelöscht',3000);
 }
@@ -1030,7 +1035,8 @@ function renderAccSec(){
   const st=F.err?`<span class="down">Fehler: ${esc(F.err)}</span>`:F.ok?'<b>online gesichert</b>':'wartet auf Verbindung – Änderungen werden später hochgeladen';
   el.innerHTML=`<h3>Konto</h3><p class="sync" style="margin:4px 0 10px">Angemeldet als <b style="color:var(--ink)">${esc(unameOf(ME))}</b> · ${st}</p>
     <div class="row"><button class="pri" data-a2="gofriends">Zu deinen Freunden</button><button data-a2="share">Benutzernamen teilen</button></div>
-    <div class="row" style="margin-top:14px"><button data-a2="logout">Abmelden</button><button data-a2="switch">Konto wechseln</button><button class="danger" data-a2="delacc">Konto löschen</button></div>`;
+    <div class="row" style="margin-top:14px"><button data-a2="logout">Abmelden</button><button data-a2="switch">Konto wechseln</button><button class="danger" data-a2="delacc">Konto löschen</button></div>
+    ${S.delAsk?`<form id="delForm" novalidate class="prbox" style="background:var(--card)"><b>Konto „${esc(unameOf(ME))}“ endgültig löschen?</b><p class="status" style="margin:4px 0 10px">Löscht dein Konto und alle Online-Daten (Trainings, Gewicht, Freunde). Auf diesem Handy bleiben deine Daten erhalten. Zur Sicherheit bitte dein Passwort eingeben.</p><label>Passwort<input id="delPw" type="password" autocomplete="current-password" required></label><p class="gerr" id="delErr" role="alert"></p><div class="row" style="margin-top:10px"><button class="pri">Endgültig löschen</button><button type="button" class="ghost" data-a2="delcancel">Abbrechen</button></div></form>`:''}`;
 }
 function lastOf(m){const l=[...m.workouts].sort(byDate).pop();return l?dDE(l.date,{day:'numeric',month:'short'}):'noch kein Training'}
 function setFMsg(t,m){S.fmsg={t,m};const el=$('fMsg');if(el){el.className='fmsg '+t;el.textContent=m}}
@@ -1043,7 +1049,7 @@ function renderFriendsTab(){
   if(!ME||!isAcc()){box._k=null;setHTML(box,'<h3>Freunde</h3><p class="status">Verbinde …</p>');setHTML(rq,'');setHTML(ls,'');head.hidden=true;if(hasCfg())initFB();return}
   head.hidden=false;
   if(box._k!==ME.uid){box._k=ME.uid;box._h=null;box.innerHTML=`<h3>Freund hinzufügen</h3>
-    <form id="fAdd" class="row" style="margin-top:8px"><label style="flex:1 1 160px">Benutzername deines Freundes<input id="fUser" placeholder="z. B. lisa" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="off" maxlength="21"></label><button class="pri">Anfrage senden</button></form>
+    <form id="fAdd" novalidate class="row" style="margin-top:8px"><label style="flex:1 1 160px">Benutzername deines Freundes<input id="fUser" placeholder="z. B. lisa" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="off" maxlength="21"></label><button class="pri">Anfrage senden</button></form>
     <p id="fMsg" class="fmsg ${S.fmsg?.t||''}" role="status" aria-live="polite">${esc(S.fmsg?.m||'')}</p>
     <p class="status" style="margin:6px 0 0">Dein Benutzername: <b class="code" style="font-size:20px">${esc(unameOf(ME))}</b> <button class="chip" data-a2="share">Teilen</button></p>`}
   const fm=$('fMsg');if(fm){fm.className='fmsg '+(S.fmsg?.t||'');fm.textContent=S.fmsg?.m||''}
@@ -1058,7 +1064,8 @@ async function accClick(e){
   if(a==='gofriends'){togglePanel(false);location.hash='freunde'}
   else if(a==='logout'||a==='switch'){signOutAcc();toast(a==='switch'?'Melde dich mit dem anderen Konto an':'Abgemeldet',3000)}
   else if(a==='gatereg'||a==='gatelogin')showGate(a==='gatereg'?'reg':'login');
-  else if(a==='delacc'){if(!arm(b,'Wirklich? Löscht dein Konto und alle Online-Daten'))return;deleteAccount()}
+  else if(a==='delacc'){S.delAsk=true;renderAccSec();$('delPw')?.focus()}
+  else if(a==='delcancel'){S.delAsk=false;renderAccSec()}
   else if(a==='acc'){const r=F.reqs.find(x=>x.uid===b.dataset.u);if(r){acceptReq(r);setFMsg('ok',`Du und ${r.name||r.uname} seid jetzt Freunde`)}renderFriendsTab()}
   else if(a==='dec'){uref(ME.uid).collection('requests').doc(b.dataset.u).delete().catch(()=>{});F.reqs=F.reqs.filter(x=>x.uid!==b.dataset.u);renderFriendsTab()}
   else if(a==='rm'){if(!arm(b,'?'))return;removeFriend(b.dataset.u)}
@@ -1068,6 +1075,7 @@ async function accClick(e){
     try{await navigator.clipboard.writeText(u);toast('Benutzername kopiert')}catch{toast('Benutzername: '+u,4000)}}
 }
 $('gsec').addEventListener('click',accClick);
+$('gsec').addEventListener('submit',e=>{if(e.target.id!=='delForm')return;e.preventDefault();const pw=$('delPw').value;if(!pw)return;$('delErr').textContent='';deleteAccount(pw)});
 $('v-freunde').addEventListener('click',accClick);
 $('v-freunde').addEventListener('submit',async e=>{if(e.target.id!=='fAdd')return;e.preventDefault();const v=$('fUser').value;const ok=await addFriend(v);if(ok)$('fUser').value=''});
 function renderFeed(){
@@ -1098,18 +1106,18 @@ function renderGate(){
   const el=$('gcard'),k=known(),t=G2.tab,dis=G2.busy?'disabled':'';
   if(t==='local'){
     el.innerHTML=`<h2 style="margin-bottom:6px">Ohne Konto</h2><p class="ghint" style="margin-bottom:14px">Deine Daten bleiben nur auf diesem Handy. Freunde kannst du so nicht hinzufügen – ein Konto kannst du später jederzeit erstellen.</p>
-      <form id="gLocal"><label>Dein Name<input id="gLName" maxlength="30" autocomplete="given-name" placeholder="z. B. Max" required></label><button class="pri">Los geht's</button><button type="button" class="ghost" data-gt="login">Zurück zur Anmeldung</button></form>`;
+      <form id="gLocal" novalidate><label>Dein Name<input id="gLName" maxlength="30" autocomplete="given-name" placeholder="z. B. Max" required></label><button class="pri">Los geht's</button><button type="button" class="ghost" data-gt="login">Zurück zur Anmeldung</button></form>`;
     return}
   el.innerHTML=`<div class="gtabs" role="group" aria-label="Anmelden oder registrieren"><button type="button" data-gt="login" aria-pressed="${t==='login'}">Anmelden</button><button type="button" data-gt="reg" aria-pressed="${t==='reg'}">Registrieren</button></div>`
     +(!hasCfg()?`<p class="ghint">Die Online-Funktion ist nicht eingerichtet. Nutze die App ohne Konto.</p>`:t==='login'?`
     ${k.length?`<div class="known">Zuletzt hier: ${k.map(u=>`<button type="button" class="chip" data-ku="${esc(u)}">${esc(u)}</button>`).join('')}</div>`:''}
-    <form id="gLogin" method="post" action="#" autocomplete="on">
+    <form id="gLogin" method="post" action="#" autocomplete="on" novalidate>
       <label>Benutzername<input name="username" id="gUser" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20" required value="${esc(k[0]||'')}"></label>
       <label>Passwort<div class="pw"><input name="password" id="gPw" type="password" autocomplete="current-password" required minlength="6"><button type="button" class="eye" data-eye aria-label="Passwort anzeigen" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label>
       <label class="chk"><input type="checkbox" id="gKeep" checked> Angemeldet bleiben</label>
       <p class="gerr" role="alert"></p><button class="pri" ${dis}>${G2.busy?'Anmelden …':'Anmelden'}</button>
     </form>`:`
-    <form id="gReg" method="post" action="#" autocomplete="on">
+    <form id="gReg" method="post" action="#" autocomplete="on" novalidate>
       <label>Dein Name <span style="font-weight:400">(sehen deine Freunde)</span><input id="gName" autocomplete="given-name" maxlength="30" required placeholder="z. B. Max"></label>
       <label>Benutzername<input name="username" id="gUser" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20" required placeholder="z. B. max.muster"></label>
       <label>Passwort<div class="pw"><input name="password" id="gPw" type="password" autocomplete="new-password" required minlength="6"><button type="button" class="eye" data-eye aria-label="Passwort anzeigen" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label>
@@ -1129,7 +1137,7 @@ $('gcard').addEventListener('click',e=>{
 $('gLocalBtn').addEventListener('click',()=>{G2.tab='local';renderGate();$('gLName')?.focus()});
 $('gcard').addEventListener('submit',async e=>{
   e.preventDefault();const id=e.target.id;
-  if(id==='gLocal'){const n=$('gLName').value.trim();if(!n)return;
+  if(id==='gLocal'){const n=$('gLName').value.trim();if(!n){toast('Bitte deinen Namen eingeben');return}
     let p=curP();if(p.uid){p={id:'p'+uid(),name:n};P.push(p)}p.name=n;LS.set('tb-profiles',P);
     if(pid!==p.id){storeDraft();pid=p.id}LS.set('tb-mode','local');loadProfile();cleanupProfiles();hideGate();renderAll();toast(`Hallo ${n}!`);return}
   if(G2.busy)return;
@@ -1168,7 +1176,7 @@ async function enterAccount(user,isNew,name){
   if(pid!==p.id){storeDraft();pid=p.id}
   LS.set('tb-profiles',P);loadProfile();
   if(isNew){
-    await nref(unameOf(user)).set({uid:user.uid});
+    try{await nref(unameOf(user)).set({uid:user.uid})}catch(e){try{await user.delete()}catch{}const er=new Error('name');er.code='name-taken';throw er}
     await uref(user.uid).set({...memberBody(p.name,S),uname:unameOf(user),friends:[],fmeta:{}});
   }
   LS.set('tb-mode','acc');addKnown(unameOf(user));
@@ -1200,7 +1208,8 @@ function renderSettings(){
       <div class="seth" style="margin:4px 0 6px">Pausenlänge</div>
       <div class="seg" id="restSeg">${[45,60,90,120,180,240].map(v=>`<button type="button" data-rest="${v}" aria-pressed="${SET.rest===v}">${v<60?v+' s':Math.floor(v/60)+(v%60?':'+pad(v%60):'')+' min'}</button>`).join('')}</div>
       <label class="sw" style="margin-top:10px"><span><b>Ton & Vibration</b><small>Signal, wenn die Pause vorbei ist (Vibration nur auf Android).</small></span><input type="checkbox" role="switch" data-s="snd" ${SET.snd?'checked':''}></label>
-    </div>`;
+    </div>
+    <p class="status" style="margin:14px 0 0;text-align:center">Trainingsbuch · Version 5 · 20.11.2026</p>`;
 }
 $('sBody').addEventListener('change',e=>{const k=e.target.dataset.s;if(!k)return;SET[k]=e.target.checked;saveSet();if(k==='rt'&&!SET.rt)stopRest();renderSettings();if(draft)renderEditor()});
 $('sBody').addEventListener('click',e=>{const b=e.target.closest('[data-rest]');if(!b)return;SET.rest=+b.dataset.rest;saveSet();renderSettings()});
