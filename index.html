@@ -273,7 +273,7 @@ body.chatting{overflow:hidden}
   <div><h1>Dein Trainingsbuch</h1><p class="gsub">Trainings, Fortschritt und Freunde</p></div></div>
   <div class="gcard" id="gcard"></div>
   <button type="button" class="glocal" id="gLocalBtn">Ohne Konto nutzen</button>
-  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 15 · 21.11.2026</p>
+  <p class="gsub" style="text-align:center;font-size:13px;opacity:.75;margin:0">Version 16 · 21.11.2026</p>
 </div></div>
 <header class="top band"><div class="wrap">
   <div class="toprow"><h1>Dein Trainingsbuch</h1><div class="tbtns"><button class="ibtn" id="sBtn" aria-label="Einstellungen" aria-expanded="false" aria-controls="spanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="pchip" id="pBtn" aria-expanded="false" aria-controls="ppanel"><span class="av" id="pAv">I</span><span id="pName">Ich</span></button></div></div>
@@ -372,6 +372,7 @@ body.chatting{overflow:hidden}
  <div id="fReq"></div>
       <div id="gList"></div>
       <h3 id="fHead" style="margin:22px 0 4px">Deine Freunde</h3>
+      <input id="fSearch" type="search" placeholder="Freunde suchen …" autocomplete="off" hidden style="margin:0 0 6px">
       <div id="fList"></div>
     </div>
     <div id="feed"></div>
@@ -474,7 +475,7 @@ const D={
 'Trainingstimer':'Workout timer','Läuft beim Eintragen eines neuen Trainings mit und speichert die Trainingsdauer.':'Runs while you log a new workout and saves the workout duration.',
 'Pausentimer':'Rest timer','Tippe nach einem Satz auf ✓ – dann läuft die Pause bis zum nächsten Satz runter.':'Tap ✓ after a set – the rest then counts down until your next set.',
 'Pausenlänge':'Rest length','Ton & Vibration':'Sound & vibration','Signal, wenn die Pause vorbei ist (Vibration nur auf Android).':'Signal when the rest is over (vibration on Android only).',
-'Sprache':'Language','Design':'Appearance','Automatisch':'Automatic','Hell':'Light','Dunkel':'Dark','Chat':'Chat','Erstes Mal – viel Erfolg!':'First time – good luck!','ohne Gewicht':'no weight','Stark – neuer Rekord!':'Strong – new record!','Gewicht':'Weight',
+'Sprache':'Language','Freunde suchen …':'Search friends …','Design':'Appearance','Automatisch':'Automatic','Hell':'Light','Dunkel':'Dark','Chat':'Chat','Erstes Mal – viel Erfolg!':'First time – good luck!','ohne Gewicht':'no weight','Stark – neuer Rekord!':'Strong – new record!','Gewicht':'Weight',
 'Brust':'Chest','Rücken':'Back','Schultern':'Shoulders','Bizeps':'Biceps','Trizeps':'Triceps','Beine':'Legs','Po':'Glutes','Waden':'Calves','Bauch':'Abs','Sonstiges':'Other',
 'Bankdrücken':'Bench press','Schrägbankdrücken':'Incline bench press','Kurzhantel-Bankdrücken':'Dumbbell bench press','Butterfly':'Pec fly','Liegestütze':'Push-ups',
 'Kniebeuge':'Squat','Frontkniebeuge':'Front squat','Beinpresse':'Leg press','Ausfallschritte':'Lunges','Beinstrecker':'Leg extension','Beinbeuger':'Leg curl',
@@ -850,7 +851,8 @@ function planStart(p,i){const a=S.plan.fromQuiz?S.plan.a:{...PDEF,days:pDefDays(
   S.plan=null;storeDraft();renderEditor();renderList();renderSum();$('editor').scrollIntoView({block:'start'});toast(LG(`Training „${draft.title}“ gestartet`,`Workout “${draft.title}” started`))}
 $('editor').addEventListener('click',e=>{const b=e.target.closest('[data-pa]');if(!b||S.ro)return;const a=b.dataset.pa;
   if(a==='preshare'){const pl=prePayload(b.dataset.p,+b.dataset.d);if(pl)sharePlanTo(pl);return}
-  if(a==='wshare'){const w=draft&&S.workouts.find(x=>x.id===draft.id);if(w)shareWorkout(w);return}
+  if(a==='wshare'){const id=b.dataset.id||draft?.id,w=id&&S.workouts.find(x=>x.id===id);if(w)shareWorkout(w);return}
+  if(a==='fromW'){const w=S.workouts.find(x=>x.id===b.dataset.id);if(!w)return;const name=(w.title||'').trim()||LG('Mein Training','My workout');saveTpl({id:uid(),name,ex:w.ex.map(x=>({n:x.n,s:x.s.length||2}))});toast(LG(`Als Plan „${name}“ gespeichert`,`Saved as plan “${name}”`),3000);return}
   if(a==='fromDraft'){if(!draft||!draft.ex.length){toast(LG('Füg zuerst Übungen hinzu','Add some exercises first'));return}
     const name=(draft.title||'').trim()||LG('Mein Training','My workout');saveTpl({id:uid(),name,ex:draft.ex.map(x=>({n:x.n,s:x.s.length||2}))});toast(LG(`Als Plan „${name}“ gespeichert`,`Saved as plan “${name}”`),3000);return}
   const st=S.plan||(S.plan={step:'start',a:{},hist:[]}),ti=b.dataset.t,tp=ti&&myTpl().find(x=>x.id===ti),ed=st.ed,ix=+b.dataset.i;
@@ -881,14 +883,31 @@ $('editor').addEventListener('input',e=>{if(e.target.id==='tName'&&S.plan?.ed)S.
 $('editor').addEventListener('submit',e=>{if(e.target.id!=='tAdd')return;e.preventDefault();const i=$('tEx'),n=exName(i.value),ed=S.plan?.ed;if(!n||!ed)return;
   if(ed.ex.length>=30){toast(LG('Maximal 30 Übungen','At most 30 exercises'));return}
   ed.name=$('tName')?.value??ed.name;ed.ex.push({n,s:2});renderEditor();$('tEx')?.focus()});
+/* ---------- Ansicht eigener Trainings ---------- */
+function viewW(w){if(draft&&draft.ex.length&&draft.id!==w.id){toast(LG('Speichere oder verwirf zuerst das offene Training','Save or discard the open workout first'),3000);$('editor').scrollIntoView({block:'start'});return}
+  draft=null;storeDraft();S.plan=null;S.sel=w.id;S.justSaved=null;S.undo=null;if(location.hash!=='#training')location.hash='training';renderEditor();renderList();$('editor').scrollIntoView({block:'start'})}
+function ownViewHTML(w){const rs=S.prs.get(w.id),v=vol(w),rx=rxOf(rxList(),w.id);
+  return `<div class="lhead"><h2>${esc(w.title||dDE(w.date,{weekday:'long'}))}</h2><div class="row" style="flex-wrap:nowrap;gap:6px"><button class="pri" data-a="editW" data-id="${esc(w.id)}" style="width:auto">✏️ ${LG('Bearbeiten','Edit')}</button><button class="ghost" data-a="closeV" style="width:auto">${LG('Schließen','Close')}</button></div></div>
+    <p class="status">${dDE(w.date,{weekday:'long',day:'numeric',month:'long',year:'numeric'})}${w.dur?' · '+LG('Dauer','Duration')+' '+durTxt(w.dur):''}${v?` · <span class="vol">${fmtVol(v)} ${LG('bewegt','lifted')}</span>`:''}</p>
+    ${rx.length?`<p class="prev" style="margin:-6px 0 10px" translate="no">${LG('Reaktionen','Reactions')}: ${rxWho(rx)}</p>`:''}
+    ${rs?`<div class="prbox"><h3>${rs.length===1?'Neuer Rekord':rs.length+' neue Rekorde'}</h3>${prList(rs)}</div>`:''}
+    ${w.ex.map(e=>`<div class="ex"><h3>${esc(e.n)} ${guideBtn(e.n)}<span class="tag">${esc(groupOf(e.n))}</span></h3><p style="margin:6px 0 0">${esc(setsText(e.s,e.u||'kg'))}</p>${e.note?`<p class="prev" style="margin:4px 0 0">Notiz: ${esc(e.note)}</p>`:''}</div>`).join('')}
+    <div class="row" style="margin-top:14px"><button data-a="dup" data-id="${esc(w.id)}" style="width:auto">${LG('Wiederholen','Repeat')}</button><button class="ghost" data-pa="fromW" data-id="${esc(w.id)}" style="width:auto">📋 ${LG('Als Plan speichern','Save as plan')}</button>${canChat()?`<button class="ghost" data-pa="wshare" data-id="${esc(w.id)}" style="width:auto">💬 ${LG('Im Chat teilen','Share in chat')}</button>`:''}</div>`}
+/* ---------- Papierkorb ---------- */
+const trKey=()=>'tb-trash-'+pid;
+const trash=()=>(LS.get(trKey(),[])||[]).filter(x=>x&&x.w&&Date.now()-x.t<30*864e5);
+function toTrash(w){LS.set(trKey(),[{w,t:Date.now()},...trash().filter(x=>x.w.id!==w.id)].slice(0,50))}
+function restoreW(id){const x=trash().find(y=>y.w.id===id);if(!x)return;if(!S.workouts.some(w=>w.id===id)){S.workouts=[...S.workouts,x.w];cloudWorkout(x.w)}
+  LS.set(trKey(),trash().filter(y=>y.w.id!==id));S.undo=null;S.sel=id;draft=null;storeDraft();renderAll();toast(LG('Training wiederhergestellt','Workout restored'))}
 function renderEditor(){
   const el=$('editor');
   if(S.ro){const w=(S.sel&&S.workouts.find(x=>x.id===S.sel))||[...S.workouts].sort(byDate).pop();
     el.innerHTML=w?detailHTML(w)+'<p class="status" style="margin:14px 0 0">Tipp in der Liste auf ein Training, um es anzusehen.</p>':'<h2>Noch keine Trainings</h2><p class="status">Sobald hier Trainings eingetragen werden, siehst du sie.</p>';return}
   if(!draft&&S.plan){renderPlans(el);return}
+  if(!draft&&S.sel){const w=S.workouts.find(x=>x.id===S.sel);if(w){el.innerHTML=ownViewHTML(w);return}S.sel=null}
   if(!draft){
     const last=[...S.workouts].sort(byDate).pop(),js=S.justSaved&&S.workouts.find(w=>w.id===S.justSaved),rs=js&&S.prs.get(js.id);
-    el.innerHTML=(js?(rs?`<div class="prbox" style="margin-top:0"><h3>Stark – ${rs.length===1?'neuer Rekord':rs.length+' neue Rekorde'}!</h3>${prList(rs)}</div>`
+    el.innerHTML=(S.undo?`<div class="prbox" style="margin-top:0;display:flex;align-items:center;gap:10px;justify-content:space-between"><span>${LG('Training gelöscht.','Workout deleted.')}</span><button class="pri" data-a="undoDel" data-id="${esc(S.undo)}" style="width:auto">${LG('Rückgängig','Undo')}</button></div>`:'')+(js?(rs?`<div class="prbox" style="margin-top:0"><h3>Stark – ${rs.length===1?'neuer Rekord':rs.length+' neue Rekorde'}!</h3>${prList(rs)}</div>`
         :`<p class="status" style="margin-bottom:12px">Training vom ${dDE(js.date)} gespeichert.</p>`):'')
       +`<h2>Bereit fürs nächste Training?</h2>
       <p style="color:var(--mute);margin:8px 0 16px">Leg ein Training mit Datum an, wähl deine Übungen aus und trag Sätze mit Wiederholungen und Gewicht ein.</p>
@@ -947,7 +966,7 @@ function addExercise(name){
   storeDraft();renderEditor();renderSum();
   document.querySelector(`.ex[data-i="${draft.ex.length-1}"] input`)?.focus();
 }
-function newDraft(date){draft={id:null,date:date||today(),title:'',ex:[],start:SET.wt?Date.now():null};S.justSaved=null;storeDraft()}
+function newDraft(date){S.sel=null;S.undo=null;draft={id:null,date:date||today(),title:'',ex:[],start:SET.wt?Date.now():null};S.justSaved=null;storeDraft()}
 function draftVol(){if(!draft)return 0;let t=0;draft.ex.forEach(e=>{const p=prevFor(e.n),u=e.u||'kg';e.s.forEach((s,j)=>{const ps=p?.sets[j]||p?.sets.at(-1);let r=num(s.r),w=num(s.w);if(r==null&&w==null)return;if(r==null&&ps)r=ps[0];w=w!=null?toKg(w,u):(ps?ps[1]||0:0);if(r>0)t+=r*w})});return t}
 function updVol(){const el=$('dvol');if(el)el.textContent=fmtVol(draftVol())}
 function openW(w,copy){
@@ -977,7 +996,7 @@ function saveDraft(){
   let dur=null;if(draft.id){const m=num(draft.durMin);dur=m!=null&&m>0?Math.round(m*60):null}else if(draft.start&&SET.wt){dur=Math.round((Date.now()-draft.start)/1000);if(dur<60||dur>6*3600)dur=null}
   if(dur)w.dur=dur;stopRest();
   S.workouts=S.workouts.filter(x=>x.id!==id).concat(w);cloudWorkout(w);
-  draft=null;storeDraft();S.justSaved=id;renderAll();
+  draft=null;storeDraft();S.justSaved=id;S.sel=null;S.undo=null;renderAll();
   const rs=S.prs.get(id);toast(rs?`Gespeichert – ${rs.length===1?'neuer Rekord':rs.length+' neue Rekorde'}!`:'Training gespeichert');
   $('editor').scrollIntoView({block:'start'});
 }
@@ -1002,8 +1021,11 @@ ed.addEventListener('click',e=>{
   const b=e.target.closest('button[data-a]');if(!b)return;const a=b.dataset.a;
   const exEl=b.closest('.ex'),i=exEl?+exEl.dataset.i:-1;
   if(a==='new'){newDraft();renderEditor();$('exname').focus()}
-  else if(a==='dup'){const w=S.workouts.find(x=>x.id===b.dataset.id);w&&openW(w,true)}
-  else if(a==='close'||a==='discard'){draft=null;storeDraft();stopRest();renderEditor();renderList()}
+  else if(a==='dup'){const w=S.workouts.find(x=>x.id===b.dataset.id);S.sel=null;w&&openW(w,true)}
+  else if(a==='editW'){const w=S.workouts.find(x=>x.id===b.dataset.id);S.sel=null;w&&openW(w)}
+  else if(a==='closeV'){S.sel=null;renderEditor();renderList()}
+  else if(a==='undoDel')restoreW(b.dataset.id);
+  else if(a==='close'||a==='discard'){const back=draft&&draft.id;draft=null;storeDraft();stopRest();S.sel=back&&S.workouts.some(x=>x.id===back)?back:null;renderEditor();renderList()}
   else if(a==='addn')addExercise(b.dataset.n);
   else if(a==='addSet'){const s=draft.ex[i].s,l=s[s.length-1];s.push({r:l?l.r:'',w:l?l.w:'',p:''});updVol();storeDraft();renderEditor();const ins=document.querySelectorAll(`.ex[data-i="${i}"] .set input[data-f=r]`);ins[ins.length-1]?.focus()}
   else if(a==='rmSet'){draft.ex[i].s.splice(+b.closest('.set').dataset.j,1);if(!draft.ex[i].s.length)draft.ex.splice(i,1);storeDraft();renderEditor()}
@@ -1015,7 +1037,7 @@ ed.addEventListener('click',e=>{
   else if(a==='save')saveDraft();
   else if(a==='delW'){
     if(!arm(b,'Wirklich löschen?'))return;
-    const id=draft.id;S.workouts=S.workouts.filter(x=>x.id!==id);cloudDelWorkout(id);draft=null;storeDraft();renderAll();toast('Training gelöscht')}
+    const id=draft.id,old=S.workouts.find(x=>x.id===id);if(old)toTrash(old);S.workouts=S.workouts.filter(x=>x.id!==id);cloudDelWorkout(id);draft=null;storeDraft();S.sel=null;S.undo=old?id:null;S.justSaved=null;renderAll();$('editor').scrollIntoView({block:'start'})}
 });
 function arm(b,txt){if(b.classList.contains('armed'))return true;const o=b.textContent;b.classList.add('armed');b.textContent=txt;setTimeout(()=>{if(b.isConnected){b.classList.remove('armed');b.textContent=o}},3500);return false}
 
@@ -1024,7 +1046,7 @@ function renderList(){
   const ws=[...S.workouts].sort(byDate).reverse(),rxl=rxList();
   $('wlist').innerHTML=ws.length?ws.map(w=>{
     const v=vol(w),sets=w.ex.reduce((a,e)=>a+e.s.length,0),rs=S.prs.get(w.id),rx=rxSum(rxOf(rxl,w.id));
-    return `<div class="wcard${(S.ro?S.sel===w.id:draft&&draft.id===w.id)?' sel':''}" tabindex="0" role="button" data-id="${w.id}" aria-label="Training vom ${dDE(w.date)} öffnen">
+    return `<div class="wcard${(S.ro?S.sel===w.id:(draft?draft.id===w.id:S.sel===w.id))?' sel':''}" tabindex="0" role="button" data-id="${w.id}" aria-label="Training vom ${dDE(w.date)} öffnen">
       <div class="day"><b>${dDE(w.date,{day:'numeric'})}</b><span>${dDE(w.date,{month:'short'})} ${dDE(w.date,{year:'2-digit'})}</span></div>
       <div><h3>${esc(w.title||dDE(w.date,{weekday:'long'}))}${rs?`<span class="pr">${rs.length===1?'Rekord':rs.length+' Rekorde'}</span>`:''}${rx?`<span class="rxs" translate="no">${rx}</span>`:''}</h3>
       <p>${w.ex.map(e=>esc(e.n)).join(' · ')}</p>
@@ -1033,7 +1055,7 @@ function renderList(){
 }
 $('wlist').addEventListener('click',e=>{const c=e.target.closest('.wcard');if(!c)return;
   if(S.ro){S.sel=c.dataset.id;renderEditor();renderList();$('editor').scrollIntoView({block:'start'});return}
-  const w=S.workouts.find(x=>x.id===c.dataset.id);w&&openW(w)});
+  const w=S.workouts.find(x=>x.id===c.dataset.id);w&&viewW(w)});
 $('wlist').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList.contains('wcard')){e.preventDefault();e.target.click()}});
 $('newW').addEventListener('click',()=>{newDraft();renderEditor();renderList();$('editor').scrollIntoView({block:'start'});$('exname').focus({preventScroll:true})});
 
@@ -1076,7 +1098,7 @@ function renderOverview(){
 $('cal').addEventListener('click',e=>{const b=e.target.closest('button[data-d]');if(!b||b.disabled)return;const ds=b.dataset.d;
   const ws=S.workouts.filter(w=>w.date===ds).sort(byDate);
   if(S.ro){if(ws.length){S.sel=ws.at(-1).id;location.hash='training';renderEditor();renderList()}return}
-  if(ws.length)openW(ws[ws.length-1]);else{newDraft(ds);location.hash='training';renderEditor();renderList();$('exname')?.focus()}});
+  if(ws.length)viewW(ws[ws.length-1]);else{S.sel=null;newDraft(ds);location.hash='training';renderEditor();renderList();$('exname')?.focus()}});
 $('calP').addEventListener('click',()=>{const [y,m]=S.cal.split('-').map(Number);const d=new Date(y,m-2,1);S.cal=`${d.getFullYear()}-${pad(d.getMonth()+1)}`;renderOverview()});
 $('calN').addEventListener('click',()=>{const [y,m]=S.cal.split('-').map(Number);const d=new Date(y,m,1);S.cal=`${d.getFullYear()}-${pad(d.getMonth()+1)}`;renderOverview()});
 $('grows').addEventListener('change',e=>{const s=e.target.closest('select[data-n]');if(!s||S.ro)return;S.meta.groups={...S.meta.groups,[s.dataset.n]:s.value};cloudMember();renderOverview();toast(`${s.dataset.n} → ${s.value}`)});
@@ -1471,9 +1493,10 @@ function renderFriendsTab(){
     <p class="status" style="margin:6px 0 0">Dein Benutzername: <b class="code" style="font-size:20px">${esc(unameOf(ME))}</b> <button class="chip" data-a2="share">Teilen</button></p>`}
   const fm=$('fMsg');if(fm){fm.className='fmsg '+(S.fmsg?.t||'');fm.textContent=S.fmsg?.m||''}
   setHTML(rq,F.reqs.length?`<h3 style="margin:22px 0 4px">Anfragen an dich</h3>${F.reqs.map(r=>`<div class="mrow">${avHTML(r.name||r.uname,null)}<div>${esc(r.name||r.uname)}<small>@${esc(r.uname||'')} möchte mit dir befreundet sein</small></div><button class="pri" data-a2="acc" data-u="${esc(r.uid)}">Annehmen</button><button class="x" data-a2="dec" data-u="${esc(r.uid)}" aria-label="Ablehnen">×</button></div>`).join('')}`:'');
-  const frs=[...F.fr.values()].sort((a,b)=>(a.state==='ok'?0:1)-(b.state==='ok'?0:1)||a.name.localeCompare(b.name,'de'));
+  const fs=$('fSearch'),q=(fs?.value||'').trim().toLowerCase();if(fs)fs.hidden=F.fr.size<2;
+  const frs=[...F.fr.values()].filter(f=>!q||f.name.toLowerCase().includes(q)||String(f.uname).toLowerCase().includes(q)).sort((a,b)=>(a.state==='ok'?0:1)-(b.state==='ok'?0:1)||a.name.localeCompare(b.name,'de'));
   setHTML(ls,frs.map(f=>`<div class="mrow">${avHTML(f.name,f.photo)}<div>${esc(f.name)}<small>${f.state==='ok'?`@${esc(f.uname)} · ${f.workouts.length} Training${f.workouts.length===1?'':'s'} · zuletzt ${lastOf(f)}`:f.state==='loading'?'lädt …':f.state==='gone'?'<span class="gone">Dieses Konto gibt es nicht mehr – bitte entfernen</span>':'<span class="pend">Wartet auf Bestätigung</span>'}</small></div>${f.state==='ok'?`<button data-a2="chat" data-u="${esc(f.uid)}">Chat${unread(f)?`<span class="cbadge">${unread(f)}</span>`:''}</button><button data-a2="view" data-u="${esc(f.uid)}">Ansehen</button>`:''}<button class="x" data-a2="rm" data-u="${esc(f.uid)}" aria-label="${esc(f.name)} entfernen">×</button></div>`).join('')
-    ||'<p class="status">Noch keine Freunde. Gib oben den Benutzernamen eines Freundes ein.</p>');
+    ||(q?`<p class="status">${LG(`Kein Freund gefunden für „${esc(q)}“.`,`No friend found for “${esc(q)}”.`)}</p>`:'<p class="status">Noch keine Freunde. Gib oben den Benutzernamen eines Freundes ein.</p>'));
   setHTML($('gList'),groupsHTML());renderFeed();updBadge();
 }
 async function accClick(e){
@@ -1495,6 +1518,7 @@ async function accClick(e){
 $('gsec').addEventListener('click',accClick);
 $('gsec').addEventListener('submit',e=>{if(e.target.id!=='delForm')return;e.preventDefault();const pw=$('delPw').value;if(!pw)return;$('delErr').textContent='';deleteAccount(pw)});
 $('v-freunde').addEventListener('click',accClick);
+$('fSearch').addEventListener('input',()=>renderFriendsTab());
 $('v-freunde').addEventListener('submit',async e=>{if(e.target.id!=='fAdd')return;e.preventDefault();const v=$('fUser').value;const ok=await addFriend(v);if(ok)$('fUser').value=''});
 function renderFeed(){
   const el=$('feed');
@@ -1511,7 +1535,7 @@ function renderFeed(){
   me.prs=null;
 }
 $('feed').addEventListener('click',e=>{const b=e.target.closest('.frow');if(!b)return;
-  if(b.dataset.u==='me'){switchTo(accPid());const w=S.workouts.find(x=>x.id===b.dataset.w);if(w)openW(w);return}
+  if(b.dataset.u==='me'){switchTo(accPid());const w=S.workouts.find(x=>x.id===b.dataset.w);if(w)viewW(w);return}
   viewRemote(b.dataset.u,b.dataset.w);location.hash='training'});
 
 /* ---------- Eigene Pläne ---------- */
@@ -1792,12 +1816,13 @@ function renderSettings(){
       <div class="seg" id="restSeg">${[45,60,90,120,180,240].map(v=>`<button type="button" data-rest="${v}" aria-pressed="${SET.rest===v}">${v<60?v+' s':Math.floor(v/60)+(v%60?':'+pad(v%60):'')+' min'}</button>`).join('')}</div>
       <label class="sw" style="margin-top:10px"><span><b>Ton & Vibration</b><small>Signal, wenn die Pause vorbei ist (Vibration nur auf Android).</small></span><input type="checkbox" role="switch" data-s="snd" ${SET.snd?'checked':''}></label>
     </div>
+    ${trash().length?`<div class="seth" style="margin:16px 0 6px">${LG('Gelöschte Trainings (30 Tage)','Deleted workouts (30 days)')}</div>${trash().map(x=>`<div class="tex"><span class="tn">${esc(x.w.title||dDE(x.w.date,{weekday:'long'}))} · ${esc(dDE(x.w.date))}</span><button type="button" data-tr="${esc(x.w.id)}" style="width:auto">${LG('Wiederherstellen','Restore')}</button></div>`).join('')}`:''}
     <div class="seth" style="margin:16px 0 6px">Design</div><div class="seg" id="thSeg">${[['auto','Automatisch'],['light','Hell'],['dark','Dunkel']].map(([k,l])=>`<button type="button" data-th="${k}" aria-pressed="${SET.theme===k}">${l}</button>`).join('')}</div>
     <div class="seth" style="margin:16px 0 6px">Sprache</div>${I18N.sw()}
-    <p class="status" style="margin:14px 0 0;text-align:center">Dein Trainingsbuch · Version 15 · 21.11.2026</p>`;
+    <p class="status" style="margin:14px 0 0;text-align:center">Dein Trainingsbuch · Version 16 · 21.11.2026</p>`;
 }
 $('sBody').addEventListener('change',e=>{const k=e.target.dataset.s;if(!k)return;SET[k]=e.target.checked;saveSet();if(k==='rt'&&!SET.rt)stopRest();renderSettings();if(draft)renderEditor()});
-$('sBody').addEventListener('click',e=>{const t=e.target.closest('[data-th]');if(t){SET.theme=t.dataset.th;saveSet();applyTheme();renderSettings();return}const b=e.target.closest('[data-rest]');if(!b)return;SET.rest=+b.dataset.rest;saveSet();renderSettings()});
+$('sBody').addEventListener('click',e=>{const tr=e.target.closest('[data-tr]');if(tr){restoreW(tr.dataset.tr);toggleSettings(false);location.hash='training';return}const t=e.target.closest('[data-th]');if(t){SET.theme=t.dataset.th;saveSet();applyTheme();renderSettings();return}const b=e.target.closest('[data-rest]');if(!b)return;SET.rest=+b.dataset.rest;saveSet();renderSettings()});
 function toggleSettings(open){$('spanel').hidden=!open;$('sBtn').setAttribute('aria-expanded',open);if(open){togglePanel(false);renderSettings()}}
 $('sBtn').addEventListener('click',()=>toggleSettings($('spanel').hidden));
 $('sClose').addEventListener('click',()=>toggleSettings(false));
